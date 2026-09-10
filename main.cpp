@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <bits/stdc++.h> // Necesario para generar enteros aleatorios
+
 void error_callback ( int errno, const char* desc )
 { std::string aux (desc);
     std::cout << "Error de GLFW número " << errno << ": " << aux << std::endl;
@@ -54,11 +56,21 @@ void scroll_callback ( GLFWwindow *window, double xoffset, double yoffset )
 
     /*
      *
-     * TRABAJO AUTÓNOMO DE LA SESIÓN 1
-     *
+     * Elegimos 3 valores aleatorios entre 0 y 1 para los 3 parámetros que definen el color de fondo. Para ello:
+     * rand() devuelve un entero aleatorio entre 0 y RAND_MAX. El valor de RAND_MAX depende del compilador,
+     * pero cualquier número entre 0 y RAND_MAX dividido entre RAND_MAX devuelve un valor entre 0 y 1.
+     * Para que el resultado sea entero, convertimos dividendo y divisor previamente a flotantes con un cast.
+     * Repetimos esta operación 3 veces, una para cada parámetro RGB. Dejamos la transparencia siempre a 1 (opaco)
+     * Así, cada vez que se mueva la rueda del ratón, el fondo cambia a un color aleatorio.
      */
-    glClearColor ( 1, 0.0, 0.0, 1.0 );
+    glClearColor ( (float)(rand()) / (float)(RAND_MAX),
+        (float)(rand()) / (float)(RAND_MAX),
+        (float)(rand()) / (float)(RAND_MAX),
+        1.0 );
+
     glEnable ( GL_DEPTH_TEST );
+
+    // Llamamos aquí al callback de refrescar ventana, pues acabamos de provocar un cambio.
     window_refresh_callback(window);
 
 }
@@ -69,6 +81,9 @@ void scroll_callback ( GLFWwindow *window, double xoffset, double yoffset )
 
 
 int main() {
+    // Semilla para la generación de números aleatorios
+    srand(time(0));
+
     std::cout << "Starting Application PAG - Prueba 01" << std::endl;
 
 
