@@ -50,16 +50,31 @@ namespace PAG {
 
 
     /**
-     * Función para cambiar el color de borrado del frame buffer.
+     * Función para cambiar el color de borrado del frame buffer. Guarda los datos en Renderer
      * @param r Nuevo R para el color de borrado del frame buffer
      * @param g Nuevo G para el color de borrado del frame buffer
      * @param b Nuevo B para el color de borrado del frame buffer
      * @param a Nuevo A (alfa) para el color de borrado del frame buffer. Normalmente será 1.
      */
     void Renderer::set_color_borrado_frame_buffer(float r, float g, float b, float a) {
+        color_borrado_frame_buffer[0] = r;
+        color_borrado_frame_buffer[1] = g;
+        color_borrado_frame_buffer[2] = b;
+
         glClearColor (r,g,b,a);
     }
 
+    /**
+     * @return Un vector de 3 flotantes: las RGB del color con el que estamos limpiando el frame buffer
+     */
+    float *Renderer::get_color_borrado_frame_buffer() {
+        return color_borrado_frame_buffer;
+    }
+
+    /**
+     *
+     * @return Un string conteniendo un resumen de las propiedades del contexto de OpenGL
+     */
     std::string Renderer::get_propiedades_del_contexto() {
         std::string resultado; // (const char*)
         resultado.append((const char*)(glGetString ( GL_RENDERER )));

@@ -23,9 +23,14 @@ namespace PAG {
         void crear_frame();
         void renderizar_frame();
 
-        void dibujar_ventana(std::string titulo);
+        void dibujar_ventana_mensajes();
+        void dibujar_ventana_seleccion_color(float* color);
 
         void anadir_mensaje(std::string mensaje);
+
+        void evento_raton(int boton, bool pulsado);
+
+
 
     };
 } // PAG

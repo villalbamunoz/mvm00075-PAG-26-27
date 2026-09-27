@@ -31,7 +31,6 @@ void window_refresh_callback ( GLFWwindow *window )
     // que se mostraba hasta ahora front. Debe ser la última orden de
     // este callback
     glfwSwapBuffers ( window );
-    PAG::GUI::getInstancia().anadir_mensaje("Callback de refresco llamado \n");
     }
 
 // - Esta función callback será llamada cada vez que se cambie el tamaño
@@ -47,22 +46,32 @@ void key_callback ( GLFWwindow *window, int key, int scancode, int action, int m
     if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS ) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
-        PAG::GUI::getInstancia().anadir_mensaje("Callback de tecla llamado \n");
-    }
+
+    PAG::GUI::getInstancia().anadir_mensaje("Callback de tecla llamado \n");
+    // TODO Aquí se añadirá la comunicación del evento de tecla con la GUI en caso de que vayamos a usarlo
+}
 
 
 // - Esta función callback será llamada cada vez que se pulse algún botón
 // del ratón sobre el área de dibujo OpenGL.
 void mouse_button_callback ( GLFWwindow *window, int button, int action, int mods ) {
     if ( action == GLFW_PRESS ){
+
         PAG::GUI::getInstancia().anadir_mensaje("Pulsado el botón: ");
         PAG::GUI::getInstancia().anadir_mensaje((std::to_string(button)));
         PAG::GUI::getInstancia().anadir_mensaje("\n");
+
+        // Comunicamos el evento a la interfaz
+        PAG::GUI::getInstancia().evento_raton(button, true);
     }
     else if ( action == GLFW_RELEASE )
-    { PAG::GUI::getInstancia().anadir_mensaje("Soltado el botón: ");
+    {
+        PAG::GUI::getInstancia().anadir_mensaje("Soltado el botón: ");
         PAG::GUI::getInstancia().anadir_mensaje(std::to_string(button));
         PAG::GUI::getInstancia().anadir_mensaje("\n");
+
+        // Comunicamos el evento a la interfaz
+        PAG::GUI::getInstancia().evento_raton(button, false);
     }
 }
 
@@ -70,6 +79,7 @@ void mouse_button_callback ( GLFWwindow *window, int button, int action, int mod
 // del ratón sobre el área de dibujo OpenGL.
 void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
 {
+
     PAG::GUI::getInstancia().anadir_mensaje("Movida la rueda del ratón");
     PAG::GUI::getInstancia().anadir_mensaje(std::to_string(xoffset));
     PAG::GUI::getInstancia().anadir_mensaje(" Unidades en horizontal y ");
@@ -77,23 +87,6 @@ void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
     PAG::GUI::getInstancia().anadir_mensaje(" unidades en vertical");
     PAG::GUI::getInstancia().anadir_mensaje("\n");
 
-
-    /*
-     *
-     * Elegimos 3 valores aleatorios entre 0 y 1 para los 3 parámetros que definen el color de fondo. Para ello:
-     * rand() devuelve un entero aleatorio entre 0 y RAND_MAX. El valor de RAND_MAX depende del compilador,
-     * pero cualquier número entre 0 y RAND_MAX dividido entre RAND_MAX devuelve un valor entre 0 y 1.
-     * Para que el resultado sea entero, convertimos dividendo y divisor previamente a flotantes con un cast.
-     * Repetimos esta operación 3 veces, una para cada parámetro RGB. Dejamos la transparencia siempre a 1 (opaco)
-     * Así, cada vez que se mueva la rueda del ratón, el fondo cambia a un color aleatorio.
-     */
-    PAG::Renderer::getInstancia().set_color_borrado_frame_buffer( (float)(rand()) / (float)(RAND_MAX),
-        (float)(rand()) / (float)(RAND_MAX),
-        (float)(rand()) / (float)(RAND_MAX),
-        1.0 );
-
-    // Llamamos aquí al callback de refrescar ventana, pues acabamos de provocar un cambio.
-    window_refresh_callback(window);
 
 }
 
@@ -186,10 +179,20 @@ int main() {
         PAG::Renderer::getInstancia().refrescar_escena();
 
         PAG::GUI::getInstancia().crear_frame();
-        PAG::GUI::getInstancia().dibujar_ventana("Ventana de ImGUI");
+        PAG::GUI::getInstancia().dibujar_ventana_mensajes();
+
+        float* color_borrado_frame_buffer = PAG::Renderer::getInstancia().get_color_borrado_frame_buffer();
+
+        PAG::GUI::getInstancia().dibujar_ventana_seleccion_color(color_borrado_frame_buffer);
+        PAG::Renderer::getInstancia().set_color_borrado_frame_buffer(
+                       color_borrado_frame_buffer[0],
+                       color_borrado_frame_buffer[1],
+                       color_borrado_frame_buffer[2],
+                       1);
+
+
+        // Último paso de renderización del frame
         PAG::GUI::getInstancia().renderizar_frame();
-
-
         glfwSwapBuffers(window);
     }
 

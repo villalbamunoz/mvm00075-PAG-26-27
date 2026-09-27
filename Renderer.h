@@ -6,6 +6,7 @@ namespace PAG {
     class Renderer {
     private:
         static  Renderer* instancia;
+        float color_borrado_frame_buffer[3] = {0.5f, 0.5f, 0.5f};
 
         Renderer();
 
@@ -17,9 +18,11 @@ namespace PAG {
         void callback_resize(int width, int height);
         void habilitar_profundidad();
 
-        void set_color_borrado_frame_buffer(float R, float G, float B, float A);
+        void set_color_borrado_frame_buffer(float r, float g, float b, float a);
 
         std::string get_propiedades_del_contexto();
+
+        float* get_color_borrado_frame_buffer();
 
 
 
