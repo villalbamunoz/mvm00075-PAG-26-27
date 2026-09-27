@@ -20,7 +20,7 @@ void error_callback ( int errno, const char* desc )
 // OpenGL deba ser redibujada.
 void window_refresh_callback ( GLFWwindow *window )
 {
-    PAG::Renderer::getInstancia().refrescar();
+    PAG::Renderer::getInstancia().refrescar_escena();
 
     // - GLFW usa un doble buffer para que no haya parpadeo. Esta orden
     // intercambia el buffer back (que se ha estado dibujando) por el
@@ -33,7 +33,8 @@ void window_refresh_callback ( GLFWwindow *window )
 // - Esta función callback será llamada cada vez que se cambie el tamaño
 // del área de dibujo OpenGL.
 void framebuffer_size_callback ( GLFWwindow *window, int width, int height )
-{ glViewport ( 0, 0, width, height );
+{
+    PAG::Renderer::getInstancia().callback_resize(width, height);
     std::cout << "Resize callback called" << std::endl;
 }
 // - Esta función callback será llamada cada vez que se pulse una tecla
@@ -74,7 +75,7 @@ void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
      * Repetimos esta operación 3 veces, una para cada parámetro RGB. Dejamos la transparencia siempre a 1 (opaco)
      * Así, cada vez que se mueva la rueda del ratón, el fondo cambia a un color aleatorio.
      */
-    glClearColor ( (float)(rand()) / (float)(RAND_MAX),
+    PAG::Renderer::getInstancia().set_color_borrado_frame_buffer( (float)(rand()) / (float)(RAND_MAX),
         (float)(rand()) / (float)(RAND_MAX),
         (float)(rand()) / (float)(RAND_MAX),
         1.0 );
@@ -139,11 +140,7 @@ int main() {
 
     // - Interrogamos a OpenGL para que nos informe de las propiedades del contexto
     // 3D construido.
-    std::cout << glGetString ( GL_RENDERER ) << std::endl
-    << glGetString ( GL_VENDOR ) << std::endl
-    << glGetString ( GL_VERSION ) << std::endl
-    << glGetString ( GL_SHADING_LANGUAGE_VERSION ) << std::endl;
-
+    std::cout << PAG::Renderer::getInstancia().get_propiedades_del_contexto() << std::endl;;
 
     // - Registramos los callbacks que responderán a los eventos principales
     glfwSetWindowRefreshCallback ( window, window_refresh_callback );
@@ -154,11 +151,11 @@ int main() {
 
     // - Establecemos un gris medio como color con el que se borrará el frame buffer.
     // No tiene por qué ejecutarse en cada paso por el ciclo de eventos.
-    glClearColor ( 0.6, 0.6, 0.6, 1.0 );
+    PAG::Renderer::getInstancia().set_color_borrado_frame_buffer(0.6, 0.6, 0.6, 1.0 );
+
     // - Le decimos a OpenGL que tenga en cuenta la profundidad a la hora de dibujar.
     // No tiene por qué ejecutarse en cada paso por el ciclo de eventos.
-    glEnable ( GL_DEPTH_TEST );
-
+    PAG::Renderer::getInstancia().habilitar_profundidad();
 
 
     // - Ciclo de eventos de la aplicación. La condición de parada es que la
@@ -182,7 +179,5 @@ int main() {
     glfwDestroyWindow ( window ); // - Cerramos y destruimos la ventana de la aplicación.
     window = nullptr;
     glfwTerminate (); // - Liberamos los recursos que ocupaba GLFW.
-
-
 
 }
