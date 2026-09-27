@@ -1,5 +1,8 @@
 #include "GUI.h"
 
+#include <iostream>
+#include <ostream>
+
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
     GUI* GUI::instancia = nullptr;
@@ -14,12 +17,20 @@ namespace PAG {
         ImGui::CreateContext ();
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+
     }
 
     /**
     * Destructor
     */
-    GUI::~GUI() {
+    GUI::~GUI() {}
+
+    /**
+     * Función para liberar los recursos de ImGUI en el momento que deseemos.
+     */
+    void GUI::liberar_recursos_gui() {
+
         // Liberamos recursos de ImGUI
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -44,14 +55,39 @@ namespace PAG {
         ImGui_ImplOpenGL3_Init ();
     }
 
-    void GUI::crearFrame() {
+    void GUI::crear_frame() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
-    void GUI::renderizarFrame() {
+    void GUI::renderizar_frame() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData ( ImGui::GetDrawData() );
+    }
+
+
+    void GUI::dibujar_ventana(std::string titulo) {
+        // Indicamos la posición de la ventana que vamos a dibujar
+        ImGui::SetNextWindowPos ( ImVec2 (10, 10), ImGuiCond_Once );
+
+
+        if ( ImGui::Begin(titulo.c_str()))
+        { // La ventana está desplegada
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+
+            // Pintamos los controles
+            ImGui::Text(mensajes.c_str());
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+    }
+
+    /*
+     * Añade una cadena de texto a los mensajes de la ventana dedicada a ello
+     * @param mensaje: cadena a añadir
+     */
+    void GUI::anadir_mensaje(std::string mensaje) {
+        mensajes.append(mensaje);
     }
 } // PAG
