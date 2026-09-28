@@ -87,6 +87,23 @@ void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
     PAG::GUI::getInstancia().anadir_mensaje(" unidades en vertical");
     PAG::GUI::getInstancia().anadir_mensaje("\n");
 
+    /*
+ *
+ * Elegimos 3 valores aleatorios entre 0 y 1 para los 3 parámetros que definen el color de fondo. Para ello:
+ * rand() devuelve un entero aleatorio entre 0 y RAND_MAX. El valor de RAND_MAX depende del compilador,
+ * pero cualquier número entre 0 y RAND_MAX dividido entre RAND_MAX devuelve un valor entre 0 y 1.
+ * Para que el resultado sea entero, convertimos dividendo y divisor previamente a flotantes con un cast.
+ * Repetimos esta operación 3 veces, una para cada parámetro RGB. Dejamos la transparencia siempre a 1 (opaco)
+ * Así, cada vez que se mueva la rueda del ratón, el fondo cambia a un color aleatorio.
+ */
+    PAG::Renderer::getInstancia().set_color_borrado_frame_buffer( (float)(rand()) / (float)(RAND_MAX),
+        (float)(rand()) / (float)(RAND_MAX),
+        (float)(rand()) / (float)(RAND_MAX),
+        1.0 );
+
+    // Llamamos aquí al callback de refrescar ventana, pues acabamos de provocar un cambio.
+    window_refresh_callback(window);
+
 
 }
 
