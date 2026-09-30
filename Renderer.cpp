@@ -132,31 +132,144 @@ namespace PAG {
     * @note No se incluye ninguna comprobación de errores
     */
     void Renderer::creaShaderProgram() {
+        // Definimos vertex y fragment shader
         std::string miVertexShader =
         "#version 410\n"
         "layout (location = 0) in vec3 posicion;\n"
+        "out vec4 hola;\n" // TODO borrar
         "void main ()\n"
         "{ gl_Position = vec4 ( posicion, 1 );\n"
+        "hola = vec4(1.0, .4, .2, 1.0);\n"
         "}\n";
 
         std::string miFragmentShader = "#version 410\n"
         "out vec4 colorFragmento;\n"
+        "in vec4 hol;\n"
         "void main ()\n"
-        "{ colorFragmento = vec4 ( 1.0, .4, .2, 1.0 );\n"
+        "{ colorFragmento = hol;\n"
         "}\n";
 
+        /*
+         * Ejemplo que da un error de enlazado:
+        *std::string miVertexShader =
+        "#version 410\n"
+        "layout (location = 0) in vec3 posicion;\n"
+        "out vec4 hola;\n" // TODO borrar
+        "void main ()\n"
+        "{ gl_Position = vec4 ( posicion, 1 );\n"
+        "hola = vec4(1.0, .4, .2, 1.0);\n"
+        "}\n";
+
+        std::string miFragmentShader = "#version 410\n"
+        "out vec4 colorFragmento;\n"
+        "in vec4 hol;\n"
+        "void main ()\n"
+        "{ colorFragmento = hol;\n" // vec4 ( 1.0, .4, .2, 1.0 )
+        "}\n";
+         */
+
+        // Creamos y compilamos el vertex shader
         idVS = glCreateShader ( GL_VERTEX_SHADER );
         const GLchar* fuenteVS = miVertexShader.c_str ();
         glShaderSource (idVS, 1, &fuenteVS, nullptr);
         glCompileShader (idVS);
+
+        // Comprobamos errores en el compilado del vertex shader
+        GLint resultadoCompilacionVS;
+        glGetShaderiv ( idVS, GL_COMPILE_STATUS, &resultadoCompilacionVS );
+
+        if ( resultadoCompilacionVS == GL_FALSE ) {
+            /* Ha habido un error en la compilación.
+            Para saber qué ha pasado, tenemos que recuperar el mensaje de error de OpenGL */
+            GLint tamMsj = 0;
+            std::string mensaje = "Error al compilar el vertex shader: ";
+            glGetShaderiv ( idVS, GL_INFO_LOG_LENGTH, &tamMsj );
+
+            if ( tamMsj > 0 ) {
+                GLchar* mensajeFormatoC = new GLchar[tamMsj];
+                GLint datosEscritos = 0;
+                glGetShaderInfoLog ( idVS, tamMsj, &datosEscritos
+                                     , mensajeFormatoC );
+                mensaje.append ( mensajeFormatoC );
+                delete[] mensajeFormatoC;
+                mensajeFormatoC = nullptr;
+
+                // En "mensaje" tenemos la información del error, la comunicamos a través de la excepción
+                throw std::runtime_error(mensaje);
+            }
+        }
+
+
+        // Creamos y compilamos el fragment shader
         idFS = glCreateShader ( GL_FRAGMENT_SHADER );
         const GLchar* fuenteFS = miFragmentShader.c_str ();
         glShaderSource(idFS, 1, &fuenteFS, nullptr);
         glCompileShader (idFS);
+
+        // Comprobamos errores en el compilado del fragment shader
+        GLint resultadoCompilacionFS;
+        glGetShaderiv ( idFS, GL_COMPILE_STATUS, &resultadoCompilacionFS );
+
+        if ( resultadoCompilacionFS == GL_FALSE ) {
+            /* Ha habido un error en la compilación.
+            Para saber qué ha pasado, tenemos que recuperar el mensaje de error de OpenGL */
+            GLint tamMsj = 0;
+            std::string mensaje = "Error al compilar el fragment shader: ";
+            glGetShaderiv ( idFS, GL_INFO_LOG_LENGTH, &tamMsj );
+
+            if ( tamMsj > 0 ) {
+                GLchar* mensajeFormatoC = new GLchar[tamMsj];
+                GLint datosEscritos = 0;
+                glGetShaderInfoLog ( idFS, tamMsj, &datosEscritos
+                                     , mensajeFormatoC );
+                mensaje.append ( mensajeFormatoC );
+                delete[] mensajeFormatoC;
+                mensajeFormatoC = nullptr;
+
+                // En "mensaje" tenemos la información del error, la comunicamos a través de la excepción
+                throw std::runtime_error(mensaje);
+            }
+        }
+
+
+
+
+        // Enlazamos vertex shader y fragment shader para crear el program shader
         idSP = glCreateProgram ();
         glAttachShader ( idSP, idVS);
         glAttachShader ( idSP, idFS);
         glLinkProgram (idSP);
+
+        // Comprobación de errores de enlazado
+        /*
+         * A veces los drives de las tarjetas gráficas no dan toda la información que deberían sobre los errores,
+         * de modo que he hecho esta comprobación como en los guiones de teoría, pero probando con shaders mal
+         * escritos que deberían dar error de enlazado no salta la excepción
+         */
+        GLint resultadoEnlazado = 0;
+        glGetProgramiv ( idSP, GL_LINK_STATUS, &resultadoEnlazado );
+
+        if ( resultadoEnlazado == GL_FALSE )
+        {  /* Ha habido un error en la compilación.
+              Para saber qué ha pasado, tenemos que recuperar el mensaje de error de
+              OpenGL */
+            GLint tamMsj = 0;
+            std::string mensaje = "Error en el enlazado de shaders: ";
+            glGetProgramiv ( idSP, GL_INFO_LOG_LENGTH, &tamMsj );
+
+            if ( tamMsj > 0 )
+            {  GLchar* mensajeFormatoC = new GLchar[tamMsj];
+                GLint datosEscritos = 0;
+                glGetProgramInfoLog ( idSP, tamMsj, &datosEscritos
+                                      , mensajeFormatoC );
+                mensaje.append ( mensajeFormatoC );
+                delete[] mensajeFormatoC;
+                mensajeFormatoC = nullptr;
+
+                // En "mensaje" tenemos la información del error, la comunicamos a través de la excepción
+                throw std::runtime_error(mensaje);
+            }
+        }
     }
 
 

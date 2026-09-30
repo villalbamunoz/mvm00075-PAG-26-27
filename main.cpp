@@ -1,3 +1,5 @@
+// TODO Explicar la sesión 3 en el README.md
+// TODO Arreglar lo de que la ventana de mensajes no sean redimensionables (seguramente sea pasar el evento de ratón a ImGUI)
 #include <iostream>
 #include "Renderer.h"
 #include "GUI.h"
@@ -183,11 +185,16 @@ int main() {
     PAG::Renderer::getInstancia().habilitar_profundidad();
 
 
-    // Antes del ciclo de eventos creamos el modelo del triángulo
-    PAG::Renderer::getInstancia().creaShaderProgram ();
-    PAG::Renderer::getInstancia().creaModelo ();
 
-    PAG::Renderer::getInstancia().inicializaOpenGL();
+    // Antes del ciclo de eventos creamos el modelo del triángulo, capturando las posibles excepciones
+    try {
+        PAG::Renderer::getInstancia().creaShaderProgram ();
+        PAG::Renderer::getInstancia().creaModelo ();
+
+        PAG::Renderer::getInstancia().inicializaOpenGL();
+    } catch (std::exception &e) {
+        PAG::GUI::getInstancia().anadir_mensaje(e.what());
+    }
 
 
     // - CICLO DE EVENTOS DE LA APLICACIÓN.
