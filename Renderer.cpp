@@ -1,8 +1,11 @@
-#include <GL/gl.h>
+// #include <GL/gl.h>
 #include "Renderer.h"
 
 #include <iostream>
 #include <ostream>
+
+
+#include "glad/glad.h"
 
 
 namespace PAG {
@@ -17,7 +20,26 @@ namespace PAG {
     /**
     * Destructor
     */
-    Renderer::~Renderer() {}
+    Renderer::~Renderer() {
+        if ( idVS != 0 )
+        { glDeleteShader ( idVS );
+        }
+        if ( idFS != 0 )
+        { glDeleteShader ( idFS );
+        }
+        if ( idSP != 0 )
+        { glDeleteProgram ( idSP );
+        }
+        if ( idVBO != 0 )
+        { glDeleteBuffers ( 1, &idVBO );
+        }
+        if ( idIBO != 0 )
+        { glDeleteBuffers ( 1, &idIBO );
+        }
+        if ( idVAO != 0 )
+        { glDeleteVertexArrays ( 1, &idVAO );
+        }
+    }
 
     /**
     * Consulta del objeto único de la clase
@@ -37,6 +59,12 @@ namespace PAG {
     void Renderer::refrescar_escena ()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glPolygonMode ( GL_FRONT_AND_BACK, GL_FILL );
+        glUseProgram ( idSP );
+        glBindVertexArray ( idVAO );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
+        glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr );
     }
 
     /**
@@ -97,4 +125,76 @@ namespace PAG {
         glEnable ( GL_DEPTH_TEST );
 
     }
+
+
+    /**
+    * Méto_do para crear, compilar y enlazar el shader program
+    * @note No se incluye ninguna comprobación de errores
+    */
+    void Renderer::creaShaderProgram() {
+        std::string miVertexShader =
+        "#version 410\n"
+        "layout (location = 0) in vec3 posicion;\n"
+        "void main ()\n"
+        "{ gl_Position = vec4 ( posicion, 1 );\n"
+        "}\n";
+
+        std::string miFragmentShader = "#version 410\n"
+        "out vec4 colorFragmento;\n"
+        "void main ()\n"
+        "{ colorFragmento = vec4 ( 1.0, .4, .2, 1.0 );\n"
+        "}\n";
+
+        idVS = glCreateShader ( GL_VERTEX_SHADER );
+        const GLchar* fuenteVS = miVertexShader.c_str ();
+        glShaderSource (idVS, 1, &fuenteVS, nullptr);
+        glCompileShader (idVS);
+        idFS = glCreateShader ( GL_FRAGMENT_SHADER );
+        const GLchar* fuenteFS = miFragmentShader.c_str ();
+        glShaderSource(idFS, 1, &fuenteFS, nullptr);
+        glCompileShader (idFS);
+        idSP = glCreateProgram ();
+        glAttachShader ( idSP, idVS);
+        glAttachShader ( idSP, idFS);
+        glLinkProgram (idSP);
+    }
+
+
+    /**
+    * Méto_do para crear el VAO para el modelo a renderizar
+    * @note No se incluye ninguna comprobación de errores
+    */
+    void PAG::Renderer::creaModelo() {
+        GLfloat vertices[] = { -.5, -.5, 0,
+    .5, -.5, 0,
+    .0, .5, 0 };
+        GLuint indices[] = { 0, 1, 2 };
+        glGenVertexArrays ( 1, &idVAO );
+        glBindVertexArray ( idVAO );
+        glGenBuffers ( 1, &idVBO );
+        glBindBuffer ( GL_ARRAY_BUFFER, idVBO );
+        glBufferData ( GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices, GL_STATIC_DRAW );
+        glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), nullptr );
+        glEnableVertexAttribArray ( 0 );
+        glGenBuffers ( 1, &idIBO );
+        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
+        glBufferData ( GL_ELEMENT_ARRAY_BUFFER, 3*sizeof(GLuint), indices, GL_STATIC_DRAW );
+    }
+
+
+    /**
+    * Méto_do para inicializar los parámetros globales de OpenGL
+    */
+    void PAG::Renderer::inicializaOpenGL ( )
+    { glClearColor ( color_borrado_frame_buffer[0],
+        color_borrado_frame_buffer[1],
+        color_borrado_frame_buffer[2],
+        1 );
+        glEnable ( GL_DEPTH_TEST );
+        glEnable ( GL_MULTISAMPLE );
+    }
+
+
+
+
 }

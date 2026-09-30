@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <ostream>
-#include "Renderer.h"
 
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).

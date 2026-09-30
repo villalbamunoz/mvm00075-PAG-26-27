@@ -9,3 +9,8 @@ En el contexto de la aplicación actual, podríamos declarar `PAG:Renderer` como
 En cuanto a qué tan acoplada está la solución, podemos cambiar el código que se ejecutará cuando ocurran los _callbacks_ sin tener que tocar directamente las funciones registradas como tal, pues entendemos que definiremos el _singleton_ en sus respectivos ficheros separados, que serán los que editemos para cambiar el funcionamiento real de los _callbacks_.
 
 Adjunto en "img/sesion_1_diagrama_UML.png" un diseño básico de como se vería `PAG:Renderer` en un diagrama UML. Muestra lo justo y necesario para indicar que es un _singleton_: atributo privado de la única instancia de sí misma, método público para acceder a esta y constructor privado. 
+
+## Sesión 2
+
+
+## Sesión 3

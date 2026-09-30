@@ -183,7 +183,15 @@ int main() {
     PAG::Renderer::getInstancia().habilitar_profundidad();
 
 
-    // - Ciclo de eventos de la aplicación. La condición de parada es que la
+    // Antes del ciclo de eventos creamos el modelo del triángulo
+    PAG::Renderer::getInstancia().creaShaderProgram ();
+    PAG::Renderer::getInstancia().creaModelo ();
+
+    PAG::Renderer::getInstancia().inicializaOpenGL();
+
+
+    // - CICLO DE EVENTOS DE LA APLICACIÓN.
+    // La condición de parada es que la
     // ventana principal deba cerrarse. Por ejemplo, si el usuario pulsa el
     // botón de cerrar la ventana (la X).
     while ( !glfwWindowShouldClose ( window ) )
