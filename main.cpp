@@ -50,7 +50,7 @@ void key_callback ( GLFWwindow *window, int key, int scancode, int action, int m
     }
 
     PAG::GUI::getInstancia().anadir_mensaje("Callback de tecla llamado \n");
-    // TODO Aquí se añadirá la comunicación del evento de tecla con la GUI en caso de que vayamos a usarlo
+    // Aquí se añadirá la comunicación del evento de tecla con la GUI en caso de que vayamos a usarlo
 }
 
 

@@ -1,8 +1,10 @@
 // #include <GL/gl.h>
 #include "Renderer.h"
 
+#include <fstream>
 #include <iostream>
 #include <ostream>
+#include <sstream>
 
 
 #include "glad/glad.h"
@@ -132,41 +134,46 @@ namespace PAG {
     * @note No se incluye ninguna comprobación de errores
     */
     void Renderer::creaShaderProgram() {
-        // Definimos vertex y fragment shader
-        std::string miVertexShader =
-        "#version 410\n"
-        "layout (location = 0) in vec3 posicion;\n"
-        "out vec4 hola;\n" // TODO borrar
-        "void main ()\n"
-        "{ gl_Position = vec4 ( posicion, 1 );\n"
-        "hola = vec4(1.0, .4, .2, 1.0);\n"
-        "}\n";
+        // Cargamos desde ficheros las definiciones del vertex y fragment shader
+        std::ifstream archivoVS;
+        archivoVS.open ( "../pag03-vs.glsl" );
 
-        std::string miFragmentShader = "#version 410\n"
-        "out vec4 colorFragmento;\n"
-        "in vec4 hol;\n"
-        "void main ()\n"
-        "{ colorFragmento = hol;\n"
-        "}\n";
+        if ( !archivoVS.is_open () )
+        {  /* Error abriendo el archivo.
+              Habrá que procesarlo convenientemente */
+            throw std::runtime_error("Error al cargar el fichero de vertex shader");
 
-        /*
-         * Ejemplo que da un error de enlazado:
-        *std::string miVertexShader =
-        "#version 410\n"
-        "layout (location = 0) in vec3 posicion;\n"
-        "out vec4 hola;\n" // TODO borrar
-        "void main ()\n"
-        "{ gl_Position = vec4 ( posicion, 1 );\n"
-        "hola = vec4(1.0, .4, .2, 1.0);\n"
-        "}\n";
+        }
 
-        std::string miFragmentShader = "#version 410\n"
-        "out vec4 colorFragmento;\n"
-        "in vec4 hol;\n"
-        "void main ()\n"
-        "{ colorFragmento = hol;\n" // vec4 ( 1.0, .4, .2, 1.0 )
-        "}\n";
-         */
+        /* Carga del código fuente */
+        std::stringstream streamVS;
+        streamVS << archivoVS.rdbuf ();
+        std::string miVertexShader = streamVS.str ();
+
+        /* Cerramos el archivo */
+        archivoVS.close ();
+
+
+        std::ifstream archivoFS;
+        archivoFS.open ( "../pag03-fs.glsl" );
+
+        if ( !archivoFS.is_open () )
+        {  /* Error abriendo el archivo.
+              Habrá que procesarlo convenientemente */
+            throw std::runtime_error("Error al cargar el fichero de fragment shader");
+
+        }
+
+        /* Carga del código fuente */
+        std::stringstream streamFS;
+        streamFS << archivoFS.rdbuf ();
+        std::string miFragmentShader = streamFS.str ();
+
+        /* Cerramos el archivo */
+        archivoFS.close ();
+
+
+
 
         // Creamos y compilamos el vertex shader
         idVS = glCreateShader ( GL_VERTEX_SHADER );
@@ -245,6 +252,7 @@ namespace PAG {
          * A veces los drives de las tarjetas gráficas no dan toda la información que deberían sobre los errores,
          * de modo que he hecho esta comprobación como en los guiones de teoría, pero probando con shaders mal
          * escritos que deberían dar error de enlazado no salta la excepción
+
          */
         GLint resultadoEnlazado = 0;
         glGetProgramiv ( idSP, GL_LINK_STATUS, &resultadoEnlazado );
