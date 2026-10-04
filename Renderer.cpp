@@ -32,8 +32,11 @@ namespace PAG {
         if ( idSP != 0 )
         { glDeleteProgram ( idSP );
         }
-        if ( idVBO != 0 )
-        { glDeleteBuffers ( 1, &idVBO );
+        if ( idVBOcoordenadas != 0 )
+        { glDeleteBuffers ( 1, &idVBOcoordenadas );
+        }
+        if ( idVBOcolores != 0 )
+        { glDeleteBuffers ( 1, &idVBOcolores );
         }
         if ( idIBO != 0 )
         { glDeleteBuffers ( 1, &idIBO );
@@ -60,11 +63,12 @@ namespace PAG {
     */
     void Renderer::refrescar_escena ()
     {
+        // Limpiamos los buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glPolygonMode ( GL_FRONT_AND_BACK, GL_FILL );
-        glUseProgram ( idSP );
-        glBindVertexArray ( idVAO );
+        glUseProgram ( idSP ); // Activamos nuestro shader program
+        glBindVertexArray ( idVAO ); // Activamos nuestro VAO
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
         glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr );
     }
@@ -173,8 +177,6 @@ namespace PAG {
         archivoFS.close ();
 
 
-
-
         // Creamos y compilamos el vertex shader
         idVS = glCreateShader ( GL_VERTEX_SHADER );
         const GLchar* fuenteVS = miVertexShader.c_str ();
@@ -250,9 +252,7 @@ namespace PAG {
         // Comprobación de errores de enlazado
         /*
          * A veces los drives de las tarjetas gráficas no dan toda la información que deberían sobre los errores,
-         * de modo que he hecho esta comprobación como en los guiones de teoría, pero probando con shaders mal
-         * escritos que deberían dar error de enlazado no salta la excepción
-
+         * de modo que pueden no saltar las excepciones si hay errores de enlazado.
          */
         GLint resultadoEnlazado = 0;
         glGetProgramiv ( idSP, GL_LINK_STATUS, &resultadoEnlazado );
@@ -287,18 +287,60 @@ namespace PAG {
     */
     void PAG::Renderer::creaModelo() {
         GLfloat vertices[] = { -.5, -.5, 0,
-    .5, -.5, 0,
-    .0, .5, 0 };
+                                .5, -.5, 0,
+                                .0, .5, 0 };
+        GLfloat colores[] = { 1, 0, 0,
+                                0, 1, 0,
+                                0, 0, 1 };
         GLuint indices[] = { 0, 1, 2 };
+
+
+        // ------ VAO ------
+        // Creamos el VAO y lo enlazamos. A partir de aquí, todas las órdenes se referirían al VAO
         glGenVertexArrays ( 1, &idVAO );
         glBindVertexArray ( idVAO );
-        glGenBuffers ( 1, &idVBO );
-        glBindBuffer ( GL_ARRAY_BUFFER, idVBO );
+
+
+
+
+        // ------ VBOs ------
+        // Creamos el VBO y lo enlazamos A partir de aquí, todas las órdenes se refieren él
+        glGenBuffers ( 1, &idVBOcoordenadas );
+        glBindBuffer ( GL_ARRAY_BUFFER, idVBOcoordenadas );
+
+        // Entregamos la información para añadir al VBO el atributo coordenadas
         glBufferData ( GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices, GL_STATIC_DRAW );
+
+        // Indicamos a OpenGL cómo están organizados los datos del atributo coordenadas de vértice en el VBO activo
+        // Usamos el índice 0 para las coordenadas
         glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), nullptr );
+
+        // Activamos el atributo coordenadas almacenado en el VBO
         glEnableVertexAttribArray ( 0 );
+
+
+        // Creamos el VBO de colores y lo enlazamos A partir de aquí, todas las órdenes se refieren él
+        glGenBuffers ( 1, &idVBOcolores );
+        glBindBuffer ( GL_ARRAY_BUFFER, idVBOcolores );
+
+        // Entregamos la información para añadir al VBO el atributo color
+        glBufferData ( GL_ARRAY_BUFFER, 9*sizeof(GLfloat), colores, GL_STATIC_DRAW );
+
+        // Indicamos a OpenGL cómo están organizados los datos del atributo color de vértice en el VBO activo
+        // Usamos el índice 1 para el color
+        glVertexAttribPointer ( 1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), nullptr );
+
+        // Activamos el atributo color almacenado en el VBO
+        glEnableVertexAttribArray ( 1 );
+
+
+
+        // ------ IBO ------
+        // Creamos el IBO y lo enlazamos. A partir de aquí, todas las órdenes se refieren al IBO
         glGenBuffers ( 1, &idIBO );
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
+
+        // Entregamos los vértices para llenar el IBO
         glBufferData ( GL_ELEMENT_ARRAY_BUFFER, 3*sizeof(GLuint), indices, GL_STATIC_DRAW );
     }
 

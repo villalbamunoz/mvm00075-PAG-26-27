@@ -16,7 +16,8 @@ namespace PAG {
         GLuint idFS = 0; // Identificador del fragment shader
         GLuint idSP = 0; // Identificador del shader program
         GLuint idVAO = 0; // Identificador del vertex array object
-        GLuint idVBO = 0; // Identificador del vertex buffer object
+        GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
+        GLuint idVBOcolores = 0; // Identificador del vertex buffer object de colores
         GLuint idIBO = 0; // Identificador del index buffer object
 
 
@@ -33,9 +34,6 @@ namespace PAG {
         float* get_color_borrado_frame_buffer();
 
         std::string get_propiedades_del_contexto();
-
-
-
 
         // Modelado básico
         void creaShaderProgram();
