@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <ostream>
-
+#include <imgui_stdlib.h>
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
     GUI* GUI::instancia = nullptr;
@@ -124,9 +124,48 @@ namespace PAG {
         // Si la ventana no está desplegada, Begin devuelve false
         ImGui::End ();
 
+
+    }
+
+
+    /**
+     * Dibuja una ventana en la que introducir el prefijo de los shaders a usar
+     */
+    void GUI::dibujar_ventana_entrada_texto(std::string* texto, bool *cambio) {
+        // Indicamos la posición de la ventana que vamos a dibujar
+        ImGui::SetNextWindowPos ( ImVec2 (250, 300), ImGuiCond_Once ); // TODO Ajustar
+
+
+        if ( ImGui::Begin("Program Shader")){
+            ImGui::SetWindowSize(ImVec2 (300, 300));
+
+            // La ventana está desplegada
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+
+            // Pintamos la caja de texto
+            ImGui::InputText ( "##", texto, ImGuiInputTextFlags_AutoSelectAll );
+
+            // Pintamos el botón
+            static int clicked = 0;
+            if (ImGui::Button("Cargar"))
+                clicked++;
+            if (clicked & 1)
+            {
+                // Indicamos que hay que volver a cargar los shaders
+                *cambio = true;
+
+                // Feedback visual por pantalla
+                ImGui::SameLine();
+                ImGui::Text("Shader cargado");
+            }
+
+
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+
         // Si no se ha desplegado la ventana, no ha habido cambios en el color seleccionado,
         // devolvemos una señal de ello.
-
     }
 
     /*

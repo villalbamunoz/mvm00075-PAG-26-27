@@ -25,6 +25,7 @@ namespace PAG {
 
         void dibujar_ventana_mensajes();
         void dibujar_ventana_seleccion_color(float* color);
+        void dibujar_ventana_entrada_texto(std::string* texto, bool *cambio);
 
         void anadir_mensaje(std::string mensaje);
 

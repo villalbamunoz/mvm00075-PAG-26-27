@@ -186,7 +186,7 @@ int main() {
 
 
 
-    // Antes del ciclo de eventos creamos el modelo del triángulo, capturando las posibles excepciones
+    // Antes del ciclo de eventos creamos el modelo predeterminado del triángulo, capturando las posibles excepciones
     try {
         PAG::Renderer::getInstancia().creaShaderProgram ();
         PAG::Renderer::getInstancia().creaModelo ();
@@ -212,6 +212,21 @@ int main() {
 
         PAG::GUI::getInstancia().crear_frame();
         PAG::GUI::getInstancia().dibujar_ventana_mensajes();
+
+        bool hay_que_recargar_shaders = false;
+        PAG::GUI::getInstancia().dibujar_ventana_entrada_texto(
+            PAG::Renderer::getInstancia().get_direccion_nombre_shaders(),
+            &hay_que_recargar_shaders);
+
+        if (hay_que_recargar_shaders) {
+            try {
+                PAG::Renderer::getInstancia().creaShaderProgram ();
+
+            } catch (std::exception &e) {
+                PAG::GUI::getInstancia().anadir_mensaje(e.what());
+            }
+            hay_que_recargar_shaders = false; // Ya hemos recargado el shader, no hace falta seguir haciéndolo
+        }
 
         float* color_borrado_frame_buffer = PAG::Renderer::getInstancia().get_color_borrado_frame_buffer();
 

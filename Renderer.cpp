@@ -134,9 +134,21 @@ namespace PAG {
     * @note No se incluye ninguna comprobación de errores
     */
     void Renderer::creaShaderProgram() {
+        // Obtenemos los nombres de los shaders
+        std::string nombre_vs;
+        std::string nombre_fs;
+        // Un nombre puede ser ../pag03-vs.glsl
+        nombre_vs.append("../");
+        nombre_fs.append("../");
+        nombre_vs.append(nombre_shaders);
+        nombre_fs.append(nombre_shaders);
+        nombre_vs.append("-vs.glsl");
+        nombre_fs.append("-fs.glsl");
+
+        // Creamos los shaders
         programShader = new ProgramShader();
-        programShader->cargarVertexShader("../pag03-vs.glsl");
-        programShader->cargarFragmentShader("../pag03-fs.glsl");
+        programShader->cargarVertexShader(nombre_vs);
+        programShader->cargarFragmentShader(nombre_fs);
         programShader->crearProgramShader();
     }
 
