@@ -2,7 +2,6 @@
 #include "Renderer.h"
 
 #include <fstream>
-#include <iostream>
 #include <ostream>
 #include <sstream>
 
@@ -23,15 +22,6 @@ namespace PAG {
     * Destructor
     */
     Renderer::~Renderer() {
-        if ( idVS != 0 )
-        { glDeleteShader ( idVS );
-        }
-        if ( idFS != 0 )
-        { glDeleteShader ( idFS );
-        }
-        if ( idSP != 0 )
-        { glDeleteProgram ( idSP );
-        }
         if ( idVBOcoordenadas != 0 )
         { glDeleteBuffers ( 1, &idVBOcoordenadas );
         }
@@ -43,6 +33,12 @@ namespace PAG {
         }
         if ( idVAO != 0 )
         { glDeleteVertexArrays ( 1, &idVAO );
+        }
+
+        if (programShader != nullptr) {
+            // Esta llamada a destructor desencadena el borrado de objetos de OpenGL en la clase Shader
+            delete programShader;
+            programShader = nullptr;
         }
     }
 
@@ -67,7 +63,7 @@ namespace PAG {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glPolygonMode ( GL_FRONT_AND_BACK, GL_FILL );
-        glUseProgram ( idSP ); // Activamos nuestro shader program
+        glUseProgram ( programShader->getIdOpenGL() ); // Activamos nuestro shader program
         glBindVertexArray ( idVAO ); // Activamos nuestro VAO
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
         glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr );
@@ -91,9 +87,9 @@ namespace PAG {
      * @param a Nuevo A (alfa) para el color de borrado del frame buffer. Normalmente será 1.
      */
     void Renderer::set_color_borrado_frame_buffer(float r, float g, float b, float a) {
-        color_borrado_frame_buffer[0] = r;
-        color_borrado_frame_buffer[1] = g;
-        color_borrado_frame_buffer[2] = b;
+        colorBorradoFrameBuffer[0] = r;
+        colorBorradoFrameBuffer[1] = g;
+        colorBorradoFrameBuffer[2] = b;
 
         glClearColor (r,g,b,a);
     }
@@ -102,7 +98,7 @@ namespace PAG {
      * @return Un vector de 3 flotantes: las RGB del color con el que estamos limpiando el frame buffer
      */
     float *Renderer::get_color_borrado_frame_buffer() {
-        return color_borrado_frame_buffer;
+        return colorBorradoFrameBuffer;
     }
 
     /**
@@ -138,146 +134,10 @@ namespace PAG {
     * @note No se incluye ninguna comprobación de errores
     */
     void Renderer::creaShaderProgram() {
-        // Cargamos desde ficheros las definiciones del vertex y fragment shader
-        std::ifstream archivoVS;
-        archivoVS.open ( "../pag03-vs.glsl" );
-
-        if ( !archivoVS.is_open () )
-        {  /* Error abriendo el archivo.
-              Habrá que procesarlo convenientemente */
-            throw std::runtime_error("Error al cargar el fichero de vertex shader");
-
-        }
-
-        /* Carga del código fuente */
-        std::stringstream streamVS;
-        streamVS << archivoVS.rdbuf ();
-        std::string miVertexShader = streamVS.str ();
-
-        /* Cerramos el archivo */
-        archivoVS.close ();
-
-
-        std::ifstream archivoFS;
-        archivoFS.open ( "../pag03-fs.glsl" );
-
-        if ( !archivoFS.is_open () )
-        {  /* Error abriendo el archivo.
-              Habrá que procesarlo convenientemente */
-            throw std::runtime_error("Error al cargar el fichero de fragment shader");
-
-        }
-
-        /* Carga del código fuente */
-        std::stringstream streamFS;
-        streamFS << archivoFS.rdbuf ();
-        std::string miFragmentShader = streamFS.str ();
-
-        /* Cerramos el archivo */
-        archivoFS.close ();
-
-
-        // Creamos y compilamos el vertex shader
-        idVS = glCreateShader ( GL_VERTEX_SHADER );
-        const GLchar* fuenteVS = miVertexShader.c_str ();
-        glShaderSource (idVS, 1, &fuenteVS, nullptr);
-        glCompileShader (idVS);
-
-        // Comprobamos errores en el compilado del vertex shader
-        GLint resultadoCompilacionVS;
-        glGetShaderiv ( idVS, GL_COMPILE_STATUS, &resultadoCompilacionVS );
-
-        if ( resultadoCompilacionVS == GL_FALSE ) {
-            /* Ha habido un error en la compilación.
-            Para saber qué ha pasado, tenemos que recuperar el mensaje de error de OpenGL */
-            GLint tamMsj = 0;
-            std::string mensaje = "Error al compilar el vertex shader: ";
-            glGetShaderiv ( idVS, GL_INFO_LOG_LENGTH, &tamMsj );
-
-            if ( tamMsj > 0 ) {
-                GLchar* mensajeFormatoC = new GLchar[tamMsj];
-                GLint datosEscritos = 0;
-                glGetShaderInfoLog ( idVS, tamMsj, &datosEscritos
-                                     , mensajeFormatoC );
-                mensaje.append ( mensajeFormatoC );
-                delete[] mensajeFormatoC;
-                mensajeFormatoC = nullptr;
-
-                // En "mensaje" tenemos la información del error, la comunicamos a través de la excepción
-                throw std::runtime_error(mensaje);
-            }
-        }
-
-
-        // Creamos y compilamos el fragment shader
-        idFS = glCreateShader ( GL_FRAGMENT_SHADER );
-        const GLchar* fuenteFS = miFragmentShader.c_str ();
-        glShaderSource(idFS, 1, &fuenteFS, nullptr);
-        glCompileShader (idFS);
-
-        // Comprobamos errores en el compilado del fragment shader
-        GLint resultadoCompilacionFS;
-        glGetShaderiv ( idFS, GL_COMPILE_STATUS, &resultadoCompilacionFS );
-
-        if ( resultadoCompilacionFS == GL_FALSE ) {
-            /* Ha habido un error en la compilación.
-            Para saber qué ha pasado, tenemos que recuperar el mensaje de error de OpenGL */
-            GLint tamMsj = 0;
-            std::string mensaje = "Error al compilar el fragment shader: ";
-            glGetShaderiv ( idFS, GL_INFO_LOG_LENGTH, &tamMsj );
-
-            if ( tamMsj > 0 ) {
-                GLchar* mensajeFormatoC = new GLchar[tamMsj];
-                GLint datosEscritos = 0;
-                glGetShaderInfoLog ( idFS, tamMsj, &datosEscritos
-                                     , mensajeFormatoC );
-                mensaje.append ( mensajeFormatoC );
-                delete[] mensajeFormatoC;
-                mensajeFormatoC = nullptr;
-
-                // En "mensaje" tenemos la información del error, la comunicamos a través de la excepción
-                throw std::runtime_error(mensaje);
-            }
-        }
-
-
-
-
-        // Enlazamos vertex shader y fragment shader para crear el program shader
-        idSP = glCreateProgram ();
-        glAttachShader ( idSP, idVS);
-        glAttachShader ( idSP, idFS);
-        glLinkProgram (idSP);
-
-        // Comprobación de errores de enlazado
-        /*
-         * A veces los drives de las tarjetas gráficas no dan toda la información que deberían sobre los errores,
-         * de modo que pueden no saltar las excepciones si hay errores de enlazado.
-         */
-        GLint resultadoEnlazado = 0;
-        glGetProgramiv ( idSP, GL_LINK_STATUS, &resultadoEnlazado );
-
-        if ( resultadoEnlazado == GL_FALSE )
-        {  /* Ha habido un error en la compilación.
-              Para saber qué ha pasado, tenemos que recuperar el mensaje de error de
-              OpenGL */
-            GLint tamMsj = 0;
-            std::string mensaje = "Error en el enlazado de shaders: ";
-            glGetProgramiv ( idSP, GL_INFO_LOG_LENGTH, &tamMsj );
-
-            if ( tamMsj > 0 )
-            {  GLchar* mensajeFormatoC = new GLchar[tamMsj];
-                GLint datosEscritos = 0;
-                glGetProgramInfoLog ( idSP, tamMsj, &datosEscritos
-                                      , mensajeFormatoC );
-                mensaje.append ( mensajeFormatoC );
-                delete[] mensajeFormatoC;
-                mensajeFormatoC = nullptr;
-
-                // En "mensaje" tenemos la información del error, la comunicamos a través de la excepción
-                throw std::runtime_error(mensaje);
-            }
-        }
+        programShader = new ProgramShader();
+        programShader->cargarVertexShader("../pag03-vs.glsl");
+        programShader->cargarFragmentShader("../pag03-fs.glsl");
+        programShader->crearProgramShader();
     }
 
 
@@ -349,9 +209,9 @@ namespace PAG {
     * Méto_do para inicializar los parámetros globales de OpenGL
     */
     void PAG::Renderer::inicializaOpenGL ( )
-    { glClearColor ( color_borrado_frame_buffer[0],
-        color_borrado_frame_buffer[1],
-        color_borrado_frame_buffer[2],
+    { glClearColor ( colorBorradoFrameBuffer[0],
+        colorBorradoFrameBuffer[1],
+        colorBorradoFrameBuffer[2],
         1 );
         glEnable ( GL_DEPTH_TEST );
         glEnable ( GL_MULTISAMPLE );

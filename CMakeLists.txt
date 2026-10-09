@@ -12,6 +12,10 @@ file( GLOB IMGUI_FILES imgui/src/*.cpp ) # Código fuente de ImGUI
 add_executable( ${PROJECT_NAME} ${MY_FILES}
                 ${GLAD_FILES}
                 ${IMGUI_FILES}
+        ProgramShader.cpp
+        ProgramShader.h
+        Shader.cpp
+        Shader.h
 
 )
 

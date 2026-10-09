@@ -2,19 +2,18 @@
 #define MVM00075_PAG_RENDERER_H
 #include <string>
 #include "glad/glad.h"
+#include "ProgramShader.h"
 
 namespace PAG {
     class Renderer {
     private:
         static  Renderer* instancia;
-        float color_borrado_frame_buffer[3] = {0.5f, 0.5f, 0.5f};
-
+        float colorBorradoFrameBuffer[3] = {0.5f, 0.5f, 0.5f};
+        ProgramShader* programShader;
         Renderer();
 
-        // Identificadores de "objetos" de OpenGL
-        GLuint idVS = 0; // Identificador del vertex shader
-        GLuint idFS = 0; // Identificador del fragment shader
-        GLuint idSP = 0; // Identificador del shader program
+
+        // Identificadores de objetos de OpenGL
         GLuint idVAO = 0; // Identificador del vertex array object
         GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
         GLuint idVBOcolores = 0; // Identificador del vertex buffer object de colores

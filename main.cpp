@@ -1,4 +1,4 @@
-// TODO Explicar la sesión 3 en el README.md
+// TODO Explicar la sesión 4 en el README.md
 // TODO Arreglar lo de que la ventana de mensajes no sean redimensionables (seguramente sea pasar el evento de ratón a ImGUI)
 #include <iostream>
 #include "Renderer.h"
