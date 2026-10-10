@@ -40,3 +40,20 @@ Tras ello debemos hacer cambios en los shaders. En el vertex shader añadimos un
 
 ### Causa de la deformación del triángulo al redimensionar la ventana
 Asumo que OpenGL no trabaja con dimensiones absolutas de la pantalla del dispositivo que estamos usando, sino que emplea coordenadas relativas a la ventana de interfaz gráfica donde se muestra la aplicación. Por ello, al deformar la ventana, el triańgulo pierde su proporción "absoluta" desde nuestra perspectiva, pero sigue manteniendo las mismas proporciones respecto a las dimensiones de la ventana. Es decir, pongamos que el triángulo tiene un vértice que dista un 20% de la ventana del borde izquierdo y un 60% del borde superior. Esas distancias en píxeles serán mayores o menores según el ratio de aspecto de la ventana, pero siempre mantendrán la proporción. Estos cambios provocan que el triángulo se deforme al hacerlo la ventana.
+
+## Sesión 4
+### Desacoplado de gestión de shaders a clases separadas
+A fin de intentar facilitar un futuro escalado, he separado la gestión de los shaders en 2 clases: 
+- `Shader`: Para contener información básica del shader. Por ahora solo el ID de objeto en OpenGL. Tiene un funcionamiento genérico, con el propósito de que en el futuro pueda contener más tipos de shaders 
+- `ShaderProgram`: Para compilar y enlazar los vertex y fragment shader y crear así el shader program. Gestiona los vertex y fragment shader usados actualmente en memoria dinámica, en una relación de composición. He tomado esta decisión porque, en el estado actual de la aplicación, los program shaders solo surgen de enlazar vertex y fragment shaders, y estos últimos solo existen para combinarse en un program shader.
+
+La creación de todos los objetos shader de OpenGL se ha llevado a `ShaderProgram`, que le pasa la información de ID a `Shader` para almacenarla. La destrucción del vertex y el fragment se ha llevado a `Shader`, para poder hacerlos con su destructor, y la del program shader a su clase homónima por la misma razón.  
+
+`Renderer` tiene a su vez una relación de composición con `ProgramShader`, gestionando su creación y su destrucción. 
+
+### Ventana GUI para elegir shaders
+Se ha seguido el sistema sugerido en la sesión anterior, donde los shaders hechos para usarse juntos comienzan con el mismo prefijo. Esta información sobre los shader cargados actualmente la tiene guardada `Renderer`. El método de `GUI` para crear la ventana de cambio de shaders contiene dos parámetros: 
+- `texto`: Un punto a string donde se guardará el texto introducido en la ventana por el usuario.
+- `cambio`: Puntero a bool que la función marcará a True si se ha intentado cargar nuevo nombre de shaders.  
+
+En el main, a través de `cambio`, obtenemos la señal para volver a crear el shader program. Solo lo hacemos cuando el usuario lo ha solicitado. A fin de probar la ventana, en el proyecto hay ahora mismo dos parejas de shaders: "pag03" que recibe correctamente los datos de color y renderiza el triángulo con degradado y "rosa", que no usa dicha información y colorea el triángulo de un único tono rosa.

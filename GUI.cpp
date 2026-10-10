@@ -130,10 +130,12 @@ namespace PAG {
 
     /**
      * Dibuja una ventana en la que introducir el prefijo de los shaders a usar
+     * @param texto Puntero a string que contendrá el texto introducido en la ventana por el usuario
+     * @param cambio Puntero a bool que la función marcará a True si se ha intentado cargar nuevo nombre de shaders
      */
     void GUI::dibujar_ventana_entrada_texto(std::string* texto, bool *cambio) {
         // Indicamos la posición de la ventana que vamos a dibujar
-        ImGui::SetNextWindowPos ( ImVec2 (250, 300), ImGuiCond_Once ); // TODO Ajustar
+        ImGui::SetNextWindowPos ( ImVec2 (250, 300), ImGuiCond_Once );
 
 
         if ( ImGui::Begin("Program Shader")){

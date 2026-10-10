@@ -220,7 +220,7 @@ int main() {
 
         if (hay_que_recargar_shaders) {
             try {
-                PAG::Renderer::getInstancia().creaShaderProgram ();
+                PAG::Renderer::getInstancia().creaShaderProgram();
 
             } catch (std::exception &e) {
                 PAG::GUI::getInstancia().anadir_mensaje(e.what());
