@@ -7,6 +7,11 @@
 #include <string>
 
 namespace PAG {
+
+    enum MovimientoCamara {
+        Ninguno, Pan, Tilt, Dolly, Crane, Orbit, Zoom
+      }; 
+
     class GUI {
     private:
         static GUI* instancia;
@@ -23,9 +28,11 @@ namespace PAG {
         void crear_frame();
         void renderizar_frame();
 
+        // Dibujado de ventanas
         void dibujar_ventana_mensajes();
         void dibujar_ventana_seleccion_color(float* color);
         void dibujar_ventana_entrada_texto(std::string* texto, bool *cambio);
+        void dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado);
 
         void anadir_mensaje(std::string mensaje);
 

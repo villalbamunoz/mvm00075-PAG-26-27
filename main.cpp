@@ -1,5 +1,5 @@
-// TODO Explicar la sesión 4 en el README.md
-// TODO Arreglar lo de que la ventana de mensajes no sean redimensionables (seguramente sea pasar el evento de ratón a ImGUI)
+// TODO Explicar la sesión 5 en el README.md
+// TODO Arreglar lo de que la ventana de mensajes no sean redimensionables
 #include <iostream>
 #include "Renderer.h"
 #include "GUI.h"
@@ -11,6 +11,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// Variables globales
+PAG::MovimientoCamara movimiento_camara = PAG::Pan;
 
 
 void error_callback ( int errno, const char* desc )
@@ -50,12 +52,11 @@ void key_callback ( GLFWwindow *window, int key, int scancode, int action, int m
     }
 
     PAG::GUI::getInstancia().anadir_mensaje("Callback de tecla llamado \n");
-    // Aquí se añadirá la comunicación del evento de tecla con la GUI en caso de que vayamos a usarlo
+    // TODO Aquí se añadirá la comunicación del evento de tecla con la GUI en caso de que vayamos a usarlo
 }
 
 
-// - Esta función callback será llamada cada vez que se pulse algún botón
-// del ratón sobre el área de dibujo OpenGL.
+// - Esta función callback será llamada cada vez que se pulse algún botón del ratón sobre el área de dibujo OpenGL.
 void mouse_button_callback ( GLFWwindow *window, int button, int action, int mods ) {
     if ( action == GLFW_PRESS ){
 
@@ -213,6 +214,7 @@ int main() {
         PAG::GUI::getInstancia().crear_frame();
         PAG::GUI::getInstancia().dibujar_ventana_mensajes();
 
+        // Ventana de selección de shaders
         bool hay_que_recargar_shaders = false;
         PAG::GUI::getInstancia().dibujar_ventana_entrada_texto(
             PAG::Renderer::getInstancia().get_direccion_nombre_shaders(),
@@ -228,14 +230,17 @@ int main() {
             hay_que_recargar_shaders = false; // Ya hemos recargado el shader, no hace falta seguir haciéndolo
         }
 
+        // Ventana de selección de color del fondo
         float* color_borrado_frame_buffer = PAG::Renderer::getInstancia().get_color_borrado_frame_buffer();
-
         PAG::GUI::getInstancia().dibujar_ventana_seleccion_color(color_borrado_frame_buffer);
         PAG::Renderer::getInstancia().set_color_borrado_frame_buffer(
                        color_borrado_frame_buffer[0],
                        color_borrado_frame_buffer[1],
                        color_borrado_frame_buffer[2],
                        1);
+
+        // Ventana de selección de movimiento de la cámara
+        PAG::GUI::getInstancia().dibujar_ventana_movimientos_camara(&movimiento_camara);
 
 
         // Último paso de renderización del frame

@@ -57,3 +57,16 @@ Se ha seguido el sistema sugerido en la sesión anterior, donde los shaders hech
 - `cambio`: Puntero a bool que la función marcará a True si se ha intentado cargar nuevo nombre de shaders.  
 
 En el main, a través de `cambio`, obtenemos la señal para volver a crear el shader program. Solo lo hacemos cuando el usuario lo ha solicitado. A fin de probar la ventana, en el proyecto hay ahora mismo dos parejas de shaders: "pag03" que recibe correctamente los datos de color y renderiza el triángulo con degradado y "rosa", que no usa dicha información y colorea el triángulo de un único tono rosa.
+
+
+## Sesión 5
+### Controles de la cámara  
+Además de poder controlarse con el ratón, cada movimiento puede controlarse también con las teclas:  
+- Pan: A y D
+- Tilt: A y D
+- Dolly: W, A, S y D
+- Crane: W y S
+- Orbit: A y D
+- Zoom: W y S
+
+Se han elegido estas combinaciones por convención, al ser las más usadas en videojuegos y existir la asociación W-delante, S-atrás, A-izquierda y D-Derecha.

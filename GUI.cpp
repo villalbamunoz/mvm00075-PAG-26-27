@@ -106,11 +106,11 @@ namespace PAG {
      */
     void GUI::dibujar_ventana_seleccion_color(float* color) {
         // Indicamos la posición de la ventana que vamos a dibujar
-        ImGui::SetNextWindowPos ( ImVec2 (500, 10), ImGuiCond_Once );
+        ImGui::SetNextWindowPos ( ImVec2 (10, 450), ImGuiCond_Once );
 
 
         if ( ImGui::Begin("Color")){
-            ImGui::SetWindowSize(ImVec2 (300, 300));
+            ImGui::SetWindowSize(ImVec2 (300, 50));
 
             // La ventana está desplegada
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
@@ -123,8 +123,6 @@ namespace PAG {
         }
         // Si la ventana no está desplegada, Begin devuelve false
         ImGui::End ();
-
-
     }
 
 
@@ -135,11 +133,11 @@ namespace PAG {
      */
     void GUI::dibujar_ventana_entrada_texto(std::string* texto, bool *cambio) {
         // Indicamos la posición de la ventana que vamos a dibujar
-        ImGui::SetNextWindowPos ( ImVec2 (250, 300), ImGuiCond_Once );
+        ImGui::SetNextWindowPos ( ImVec2 (10, 325), ImGuiCond_Once );
 
 
         if ( ImGui::Begin("Program Shader")){
-            ImGui::SetWindowSize(ImVec2 (300, 300));
+            ImGui::SetWindowSize(ImVec2 (300, 100));
 
             // La ventana está desplegada
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
@@ -169,6 +167,108 @@ namespace PAG {
         // Si no se ha desplegado la ventana, no ha habido cambios en el color seleccionado,
         // devolvemos una señal de ello.
     }
+
+    /**
+     * Dibuja la ventana para seleccionar el movimiento actual de la cámara.
+     * TODO Comentar posibles parámetros
+     */
+    void GUI::dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado) {
+        // Indicamos la posición de la ventana que vamos a dibujar
+        ImGui::SetNextWindowPos ( ImVec2 (700, 10), ImGuiCond_Once );
+
+
+        if ( ImGui::Begin("Movimientos de cámara")){
+            ImGui::SetWindowSize(ImVec2 (300, 100));
+
+            // La ventana está desplegada
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+
+            bool _changedM;
+            int indice_seleccionado;
+            // "Traducimos" de enum a entero según el orden en el que los movimientos aparecen en el selector
+            switch (*movimiento_seleccionado) {
+                case Ninguno:
+                    indice_seleccionado = 0;
+                    break;
+
+                case Pan:
+                    indice_seleccionado = 1;
+                    break;
+
+                case Tilt:
+                    indice_seleccionado = 2;
+                    break;
+
+                case Dolly:
+                    indice_seleccionado = 3;
+                    break;
+                case Crane:
+                    indice_seleccionado = 4;
+                    break;
+                case Orbit:
+                    indice_seleccionado = 5;
+                    break;
+                case Zoom:
+                    indice_seleccionado = 6;
+                    break;
+                default:
+                    indice_seleccionado = 0;
+                    break;
+
+            }
+
+            // Pintamos el selector de movimiento
+            if ( _changedM = ImGui::Combo ( "##MovType", (int*)&indice_seleccionado,
+                "Niguno\0Pan\0Tilt\0Dolly\0Crane\0Orbit\0Zoom\0\0" ) ) {
+            }
+
+            // Pintamos las instrucciones
+            switch (indice_seleccionado) {
+                case 1:
+                    // Pan
+                    ImGui::Text("Pan: teclas A y D");
+                    *movimiento_seleccionado = Pan;
+                    break;
+                case 2:
+                    // Tilt
+                    ImGui::Text("Tilt: teclas A y D");
+                    *movimiento_seleccionado = Tilt;
+                    break;
+                case 3:
+                    // Dolly
+                    ImGui::Text("Dolly: teclas W, A, S y D");
+                    *movimiento_seleccionado = Dolly;
+                    break;
+                case 4:
+                    // Crane
+                    ImGui::Text("Crane: teclas W y S");
+                    *movimiento_seleccionado = Crane;
+                    break;
+                case 5:
+                    // Orbit
+                    ImGui::Text("Orbit: teclas A y D");
+                    *movimiento_seleccionado = Orbit;
+                    break;
+
+                case 6:
+                    // Zoom
+                    ImGui::Text("Zoom: teclas W y S");
+                    *movimiento_seleccionado = Zoom;
+                    break;
+                default:
+                    ImGui::Text("Aquí aparecerán los controles");
+                    *movimiento_seleccionado = Ninguno;
+                    break;
+            }
+
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+
+
+    }
+
+
 
     /*
      * Añade una cadena de texto a los mensajes de la ventana dedicada a ello
