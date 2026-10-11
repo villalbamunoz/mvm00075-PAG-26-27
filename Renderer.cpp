@@ -1,4 +1,3 @@
-// #include <GL/gl.h>
 #include "Renderer.h"
 
 #include <fstream>
@@ -7,7 +6,9 @@
 
 
 #include "glad/glad.h"
-
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp> // Para poder usar glm::lookAt
+#include <glm/ext/matrix_clip_space.hpp> // Para poder usar glm::perspective
 
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
@@ -56,16 +57,48 @@ namespace PAG {
 
     /**
     * Méto_do para hacer el refresco de la escena
+    * Toma como parámetros los necesarios para calcular las matrices de visión y proyección en perspectiva
     */
-    void Renderer::refrescar_escena ()
+    void Renderer::refrescar_escena (glm::vec3 puntoPosCamara, glm::vec3 puntoLA, glm::vec3 upVector, glm::float32 fovYGrados,
+            glm::float32 aspectRatio, glm::float32 distZNear, glm::float32 distZFar)
     {
         // Limpiamos los buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glPolygonMode ( GL_FRONT_AND_BACK, GL_FILL );
-        glUseProgram ( programShader->getIdOpenGL() ); // Activamos nuestro shader program
-        glBindVertexArray ( idVAO ); // Activamos nuestro VAO
+
+        // Activamos nuestro shader program
+        glUseProgram ( programShader->getIdOpenGL());
+
+
+
+        // Calculamos las matrices de visión y proyección
+        glm::mat4 matrizVision = glm::lookAt(puntoPosCamara, puntoLA, upVector);
+        glm::mat4 matrizProyeccion = glm::perspective(glm::radians(fovYGrados), aspectRatio, distZNear, distZFar);
+
+        // Creamos la matriz compuesta por la de visión y proyección
+        glm::mat4 matrizCompuesta = matrizProyeccion * matrizVision; // TODO Puede que haga falta normalizar el resultado
+
+
+        // Pasamos la matriz como uniform al vertex shader
+        std::string nombreUniform = "matrizModeladoVisionProyeccion"; // Mismo nombre que hemos puesto en el shader
+        GLint posicion = glGetUniformLocation ( programShader->getIdOpenGL(), nombreUniform.c_str () );
+
+        if ( posicion != -1 )
+        {  // El uniform existe y se ha podido localizar correctamente
+            glUniformMatrix4fv ( posicion, 1, GL_FALSE, &matrizCompuesta[0][0] );
+        }
+
+
+
+
+        // Activamos nuestro VAO
+        glBindVertexArray (idVAO);
+
+        // Indicamos el IBO a usar
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
+
+        // Comenzamos el proceso de rendering
         glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr );
     }
 
@@ -140,8 +173,8 @@ namespace PAG {
         // Un nombre puede ser ../pag03-vs.glsl
         nombre_vs.append("../");
         nombre_fs.append("../");
-        nombre_vs.append(nombre_shaders);
-        nombre_fs.append(nombre_shaders);
+        nombre_vs.append(nombreShaders);
+        nombre_fs.append(nombreShaders);
         nombre_vs.append("-vs.glsl");
         nombre_fs.append("-fs.glsl");
 

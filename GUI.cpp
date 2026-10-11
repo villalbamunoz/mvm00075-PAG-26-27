@@ -231,7 +231,7 @@ namespace PAG {
                     break;
                 case 2:
                     // Tilt
-                    ImGui::Text("Tilt: teclas A y D");
+                    ImGui::Text("Tilt: teclas W y S");
                     *movimiento_seleccionado = Tilt;
                     break;
                 case 3:

@@ -63,7 +63,7 @@ En el main, a través de `cambio`, obtenemos la señal para volver a crear el sh
 ### Controles de la cámara  
 Además de poder controlarse con el ratón, cada movimiento puede controlarse también con las teclas:  
 - Pan: A y D
-- Tilt: A y D
+- Tilt: W y S
 - Dolly: W, A, S y D
 - Crane: W y S
 - Orbit: A y D
