@@ -60,8 +60,8 @@ En el main, a través de `cambio`, obtenemos la señal para volver a crear el sh
 
 
 ## Sesión 5
-### Controles de la cámara  
-Además de poder controlarse con el ratón, cada movimiento puede controlarse también con las teclas:  
+### Controles de la cámara
+Podemos elegir el movimiento actual usando el menú de selección de la ventana GUI dedicada a la cámara. Se mostrarán las instrucciones para usar el movimiento actual. Además de poder controlarse con el ratón, cada movimiento puede controlarse también con las teclas:  
 - Pan: A y D
 - Tilt: W y S
 - Dolly: W, A, S y D
@@ -70,3 +70,13 @@ Además de poder controlarse con el ratón, cada movimiento puede controlarse ta
 - Zoom: W y S
 
 Se han elegido estas combinaciones por convención, al ser las más usadas en videojuegos y existir la asociación W-delante-arriba, S-detrás-abajo, A-izquierda y D-Derecha.
+
+### Adición de la cámara virtual
+En primer lugar, he incluido los parámetros que definen la cámara en una clase homónima `PAG::Camara` dedicada para ello. Se trata de un singleton que contiene la posición, el punto al que mira, su ángulo de visión, ratio de aspecto y distancias a los planos near y far. Contiene además los parámetros que definen la cantidad de movimiento en esta sesión, es decir, cuántos grados rotamos al hacer tilt, cuánto nos desplazamos al hacer dolly, etc. En cuanto a los métodos, tiene uno por cada tipo de movimiento (pan, tilt, dolly, crane, orbit y zoom), cada uno con un parámetro booleano o enumerado específico para concretar lo necesario en cada caso. Por ejemplo, para el pan solo nos hace falta especificar el sentido en el que rotamos, pero para el dolly tenemos 4 opciones, por eso he usado un enumerado. La clase cuenta además con métodos para calcular parámetros de la cámara no definidos explícitamente en la clase, los 3 vectores de su sistema de coordenadas unv.  
+
+He añadido 2 nuevos parámetros uniform para los shaders de esta sesión (pag05):
+- `matrizModeladoVision`: Para aplicar a los vectores normales y tangentes. No se ha usado aún en esta sesión.
+- `matrizModeladoVisionProyeccion`: Para aplicar a los vértices. Sí se ha usado en esta sesión, multiplica a las coordenadas de posición del vértice para calcular la posición.
+
+En `Renderer::refrescar_escena()` calculamos las matrices de visión y proyección usando los parámetros de la cámara extraídos de su clase. He decidido que en `main` se extraigan estos datos y se le pasen como parámetros a la función `PAG::refrescar_escena()` y que por ahora Renderer no interactúe con la cámara por intentar mantener el desacoplamiento. Componemos las matrices multiplicándolas y las pasamos al vertex shader. Al encontrarse este procedimiento dentro de `Renderer::refrescar_escena()`, ahora podemos aplicar cambios en los parámetros de la cámara desde cualquier punto de la aplicación y se verán reflejados en cuanto se renderice la imagen de nuevo.  
+
