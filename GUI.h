@@ -36,7 +36,8 @@ namespace PAG {
 
         void anadir_mensaje(std::string mensaje);
 
-        void evento_raton(int boton, bool pulsado);
+        void evento_boton_raton(int boton, bool pulsado);
+        void evento_movimiento_raton(double x, double y);
 
 
 

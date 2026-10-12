@@ -1,5 +1,5 @@
 // TODO Explicar la sesión 5 en el README.md
-// TODO Arreglar lo de que la ventana de mensajes no sean redimensionables
+// TODO Arreglar que las ventanas no sean redimensionables
 #include <iostream>
 #include "Renderer.h"
 #include "GUI.h"
@@ -14,8 +14,10 @@
 #include "Camara.h"
 
 // Variables globales
-PAG::MovimientoCamara movimiento_camara = PAG::Pan;
-
+PAG::MovimientoCamara movimiento_camara = PAG::Pan; // Este será el movimiento predeterminado
+bool boton_izq_raton_pulsado = false;
+double pos_x_raton_ultima_pulsacion_tecla_izq = 0;
+double pos_y_raton_ultima_pulsacion_tecla_izq = 0;
 
 void error_callback ( int errno, const char* desc )
 { std::string aux (desc);
@@ -147,7 +149,11 @@ void mouse_button_callback ( GLFWwindow *window, int button, int action, int mod
         PAG::GUI::getInstancia().anadir_mensaje("\n");
 
         // Comunicamos el evento a la interfaz
-        PAG::GUI::getInstancia().evento_raton(button, true);
+        PAG::GUI::getInstancia().evento_boton_raton(button, true);
+
+        // Guardamos la información en las variables globales
+        boton_izq_raton_pulsado = true;
+        glfwGetCursorPos(window, &pos_x_raton_ultima_pulsacion_tecla_izq, &pos_y_raton_ultima_pulsacion_tecla_izq);
     }
     else if ( action == GLFW_RELEASE )
     {
@@ -156,7 +162,92 @@ void mouse_button_callback ( GLFWwindow *window, int button, int action, int mod
         PAG::GUI::getInstancia().anadir_mensaje("\n");
 
         // Comunicamos el evento a la interfaz
-        PAG::GUI::getInstancia().evento_raton(button, false);
+        PAG::GUI::getInstancia().evento_boton_raton(button, false);
+
+        // Guardamos la información en la variable global
+        boton_izq_raton_pulsado = false;
+    }
+}
+
+// - Esta función callback será llamada cada vez que se mueva el ratón
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+
+    // Comunicamos el evento a la GUI
+    PAG::GUI::getInstancia().evento_movimiento_raton(xpos, ypos);
+
+    if (boton_izq_raton_pulsado) {
+        double diferencia_x = pos_x_raton_ultima_pulsacion_tecla_izq - xpos;
+        double diferencia_y = pos_y_raton_ultima_pulsacion_tecla_izq - ypos;
+
+        // Actuamos según el movimiento seleccionado
+        switch (movimiento_camara) {
+        case PAG::Pan:
+            if ( diferencia_x > 0 ) {
+                PAG::Camara::getInstancia().pan(true);
+            } else {
+                PAG::Camara::getInstancia().pan(false);
+            }
+            break;
+
+        case PAG::Tilt:
+            if ( diferencia_y > 0 ) {
+                PAG::Camara::getInstancia().tilt(true);
+            } else {
+                PAG::Camara::getInstancia().tilt(false);
+            }
+
+            break;
+
+        case PAG::Dolly:
+            if ( diferencia_x > 0 )  {
+                PAG::Camara::getInstancia().dolly(PAG::xPos);
+            } else {
+                PAG::Camara::getInstancia().dolly(PAG::xNeg);
+            }
+
+            if ( diferencia_y > 0 )  {
+                PAG::Camara::getInstancia().dolly(PAG::zPos);
+            } else {
+                PAG::Camara::getInstancia().dolly(PAG::zNeg);
+            }
+            break;
+
+        case PAG::Crane:
+            if ( diferencia_y > 0 ){
+                PAG::Camara::getInstancia().crane(true);
+            } else {
+                PAG::Camara::getInstancia().crane(false);
+            }
+            break;
+
+        case PAG::Orbit:
+            if ( diferencia_x > 0 ){
+                PAG::Camara::getInstancia().orbit(PAG::latNeg);
+            } else {
+                PAG::Camara::getInstancia().orbit(PAG::latPos);
+            }
+
+            if ( diferencia_y > 0 ) {
+                PAG::Camara::getInstancia().orbit(PAG::lonNeg);
+            } else {
+                PAG::Camara::getInstancia().orbit(PAG::lonPos);
+            }
+            break;
+
+        case PAG::Zoom:
+            if ( diferencia_y > 0 ) {
+                PAG::Camara::getInstancia().zoom(true);
+            } else {
+                PAG::Camara::getInstancia().zoom(false);
+            }
+            break;
+        case PAG::Ninguno:
+            break;
+        }
+
+
+
+
     }
 }
 
@@ -258,6 +349,7 @@ int main() {
     glfwSetKeyCallback ( window, key_callback );
     glfwSetMouseButtonCallback ( window, mouse_button_callback );
     glfwSetScrollCallback ( window, scroll_callback );
+    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     // - Establecemos un gris medio como color con el que se borrará el frame buffer.
     // No tiene por qué ejecutarse en cada paso por el ciclo de eventos.

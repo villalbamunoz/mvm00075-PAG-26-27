@@ -277,11 +277,19 @@ namespace PAG {
     }
 
     /*
-     * Comunica a ImGUI los eventos de ratón
-     *
+     * Comunica a ImGUI los eventos de pulsado de botones del ratón
      */
-    void GUI::evento_raton(int boton, bool pulsado) {
+    void GUI::evento_boton_raton(int boton, bool pulsado) {
         ImGuiIO& io = ImGui::GetIO ();
         io.AddMouseButtonEvent ( boton, pulsado );
+    }
+
+    /*
+     * Comunica a ImGUI los eventos de movimiento del ratón
+     *
+     */
+    void GUI::evento_movimiento_raton(double x, double y) {
+        ImGuiIO& io = ImGui::GetIO ();
+        io.AddMousePosEvent(x, y);
     }
 } // PAG

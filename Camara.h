@@ -30,9 +30,9 @@ namespace PAG {
         // Parámetros que definen los movimientos
         glm::float32 gradosPan = 1.0f; // Cuánto rotamos el punto LA respecto de la posición de la cámara al hacer Pan
         glm::float32 gradosTilt = 1.0f; // Cuánto rotamos el punto LA respecto de la posición de la cámara al hacer Tilt
-        glm::float32 distDolly = 0.1f; // Cuánto nos movemos en cada pulsación que hacemos Dolly
-        glm::float32 distCrane = 0.1f; // Cuánto nos movemos en cada pulsación que hacemos Crane
-        glm::float32 gradosOrbit = 5.0f; // Cuánto rotamos el punto de posición de la cámara respecto al LA al hacer Orbit
+        glm::float32 distDolly = 0.01f; // Cuánto nos movemos en cada pulsación que hacemos Dolly
+        glm::float32 distCrane = 0.01f; // Cuánto nos movemos en cada pulsación que hacemos Crane
+        glm::float32 gradosOrbit = 0.5f; // Cuánto rotamos el punto de posición de la cámara respecto al LA al hacer Orbit
         glm::float32 gradosZoom = 1.0f; // Cuánto abrimos el zoom por pulsación de tecla
 
 

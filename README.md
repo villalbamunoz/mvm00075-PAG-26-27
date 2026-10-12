@@ -4,7 +4,7 @@ Proyecto de prácticas de la asignatura Programación de Aplicaciones Gráficas 
 ## Sesión 1: Ejercicio de reflexión
 Una posible solución al problema es definir `PAG::Renderer` como una clase que siga el patrón de diseño _singleton_. Tiene sentido, pues no se va a declarar más de una instancia de ella, al encargarse de una tarea tan global como gestionar el contexto gráfico de OpenGL de nuestra aplicación. Por ejemplo, si tuviéramos 2 instancias diferentes de `PAG::Renderer` no tendría diferencia el llamar al método `refrescarVentana()` de una u otra, pues ambos harían lo mismo.
 
-En el contexto de la aplicación actual, podríamos declarar `PAG:Renderer` como una variable global en el fichero main.cpp, pues no hay otro fichero donde hacerlo. En cualquier caso, debe ser un lugar accesible para todos los módulos de la aplicación, pues contendría funcionalidad básica necesaria para casi cualquier acción que queramos realizar en esta. De esta forma encontramos una vía para evitar el problema de no poder registrar métodos de clases en los _callbacks_. Podemos colocar funciones sencillas de C como las que tenemos actualmente y sustituir su contenido por una llamada al método oportuno de la variable global `PAG::Renderer`. La limitación solo existe en lo que podemos o no registrar como _callback_, no en lo que estas funciones contengan. 
+En el contexto de la aplicación actual, podríamos declarar `PAG:Renderer` como una variable global en el fichero `main.cpp`, pues no hay otro fichero donde hacerlo. En cualquier caso, debe ser un lugar accesible para todos los módulos de la aplicación, pues contendría funcionalidad básica necesaria para casi cualquier acción que queramos realizar en esta. De esta forma encontramos una vía para evitar el problema de no poder registrar métodos de clases en los _callbacks_. Podemos colocar funciones sencillas de C como las que tenemos actualmente y sustituir su contenido por una llamada al método oportuno de la variable global `PAG::Renderer`. La limitación solo existe en lo que podemos o no registrar como _callback_, no en lo que estas funciones contengan. 
 
 En cuanto a qué tan acoplada está la solución, podemos cambiar el código que se ejecutará cuando ocurran los _callbacks_ sin tener que tocar directamente las funciones registradas como tal, pues entendemos que definiremos el _singleton_ en sus respectivos ficheros separados, que serán los que editemos para cambiar el funcionamiento real de los _callbacks_.
 
@@ -22,7 +22,7 @@ Empezamos con las comprobaciones de compilado. Nos basamos en el método `glGetS
 - Constante que indica la información pedida
 - Variable donde se guardará el resultado de la consulta. 
 
-Con la constante `GL_COMPILE_STATUS` comprobamos si ha compilado correctamente. En caso negativo, queremos consultar más detalles. Para ello debemos primeramente obtener el tamaño del mensaje de error, usando la constante `GL_INFO_LOG_LENGTH`. En caso de tener algún mensaje (longitud mayor a 0), lo obtenemos con el método `glGetShaderInfoLog`. Lanzamos una excepción de tipo `runtime_error`, que será capturada en el main y mostrada por la GUI añadiendo el texto a la estructura de datos de mensajes del singleton `GUI`.  
+Con la constante `GL_COMPILE_STATUS` comprobamos si ha compilado correctamente. En caso negativo, queremos consultar más detalles. Para ello debemos primeramente obtener el tamaño del mensaje de error, usando la constante `GL_INFO_LOG_LENGTH`. En caso de tener algún mensaje (longitud mayor a 0), lo obtenemos con el método `glGetShaderInfoLog`. Lanzamos una excepción de tipo `runtime_error`, que será capturada en el `main` y mostrada por la GUI añadiendo el texto a la estructura de datos de mensajes del singleton `GUI`.  
 
 El proceso es casi idéntico para los errores de enlazado, solo que usando métodos para el program shader: `glGetProgramiv` y `glGetProgramInfoLog` 
 
@@ -62,17 +62,25 @@ En el main, a través de `cambio`, obtenemos la señal para volver a crear el sh
 ## Sesión 5
 ### Controles de la cámara
 Podemos elegir el movimiento actual usando el menú de selección de la ventana GUI dedicada a la cámara. Se mostrarán las instrucciones para usar el movimiento actual. Además de poder controlarse con el ratón, cada movimiento puede controlarse también con las teclas:  
-- Pan: A y D
-- Tilt: W y S
-- Dolly: W, A, S y D
-- Crane: W y S
-- Orbit: W, A, S y D
-- Zoom: W y S
+- _Pan_: A y D
+- _Tilt_: W y S
+- _Dolly_: W, A, S y D
+- _Crane_: W y S
+- _Orbit_: W, A, S y D
+- _Zoom_: W y S
 
 Se han elegido estas combinaciones por convención, al ser las más usadas en videojuegos y existir la asociación W-delante-arriba, S-detrás-abajo, A-izquierda y D-Derecha.
 
+Para controlar los movimientos con el ratón, se ha seguido la estrategia propuesta en el guion. En el `main` hay 3 variables globales:
+- `boton_izq_raton_pulsado`: Booleano que se pone a verdadero al pulsar el botón izquierdo del ratón y falso al soltarlo
+- `pos_x_raton_ultima_pulsacion_tecla_izq`: Al pulsar el botón izquierdo del ratón, guardamos aquí su coordenada en X
+- `pos_y_raton_ultima_pulsacion_tecla_izq`: Al pulsar el botón izquierdo del ratón, guardamos aquí su coordenada en Y  
+
+He colocado un nuevo callback para el movimiento del ratón, que llama al movimiento actual de la cámara si se está manteniendo pulsado el botón izquierdo mientras se mueve el ratón. Se elige la dirección del movimiento dependiendo de si estamos aumentando o disminuyendo la X/Y y según el tipo de movimiento. Por ejemplo, para _pan_ da igual los movimientos en Y que hagamos, pero para _dolly_ se tiene en cuenta tanto los cambios en X como los de Y.
+
+
 ### Adición de la cámara virtual
-En primer lugar, he incluido los parámetros que definen la cámara en una clase homónima `PAG::Camara` dedicada para ello. Se trata de un singleton que contiene la posición, el punto al que mira, su ángulo de visión, ratio de aspecto y distancias a los planos near y far. Contiene además los parámetros que definen la cantidad de movimiento en esta sesión, es decir, cuántos grados rotamos al hacer tilt, cuánto nos desplazamos al hacer dolly, etc. En cuanto a los métodos, tiene uno por cada tipo de movimiento (pan, tilt, dolly, crane, orbit y zoom), cada uno con un parámetro booleano o enumerado específico para concretar lo necesario en cada caso. Por ejemplo, para el pan solo nos hace falta especificar el sentido en el que rotamos, pero para el dolly tenemos 4 opciones, por eso he usado un enumerado. La clase cuenta además con métodos para calcular parámetros de la cámara no definidos explícitamente en la clase, los 3 vectores de su sistema de coordenadas unv.  
+En primer lugar, he incluido los parámetros que definen la cámara en una clase homónima `PAG::Camara` dedicada para ello. Se trata de un singleton que contiene la posición, el punto al que mira, su ángulo de visión, ratio de aspecto y distancias a los planos near y far. Contiene además los parámetros que definen la cantidad de movimiento en esta sesión, es decir, cuántos grados rotamos al hacer _tilt_, cuánto nos desplazamos al hacer _dolly_, etc. En cuanto a los métodos, tiene uno por cada tipo de movimiento (_pan_, _tilt_, _dolly_, _crane_, _orbit_ y _zoom_), cada uno con un parámetro booleano o enumerado específico para concretar lo necesario en cada caso. Por ejemplo, para el _pan_ solo nos hace falta especificar el sentido en el que rotamos, pero para el _dolly_ tenemos 4 opciones, por eso he usado un enumerado. La clase cuenta además con métodos para calcular parámetros de la cámara no definidos explícitamente en la clase, los 3 vectores de su sistema de coordenadas unv.  
 
 He añadido 2 nuevos parámetros uniform para los shaders de esta sesión (pag05):
 - `matrizModeladoVision`: Para aplicar a los vectores normales y tangentes. No se ha usado aún en esta sesión.
