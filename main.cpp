@@ -33,7 +33,7 @@ void window_refresh_callback ( GLFWwindow *window )
     PAG::Renderer::getInstancia().refrescar_escena(
         PAG::Camara::getInstancia().get_punto_pos_camara(),
         PAG::Camara::getInstancia().get_punto_la(),
-        {0,1,0}, // TODO Upvector aquí
+        PAG::Camara::getInstancia().get_vector_v(),
         PAG::Camara::getInstancia().get_fov_y_grados(),
         PAG::Camara::getInstancia().get_aspect_ratio(),
         PAG::Camara::getInstancia().get_dist_plano_near(),
@@ -64,75 +64,75 @@ void key_callback ( GLFWwindow *window, int key, int scancode, int action, int m
     PAG::GUI::getInstancia().anadir_mensaje("Callback de tecla llamado \n");
 
     // Recibimos los controles de teclado según el movimiento de cámara
-    switch (movimiento_camara) { // TODO Quitar los action == GLFW_PRESS si no son necesarios
+    switch (movimiento_camara) {
         case PAG::Pan:
-            if ( key == GLFW_KEY_A && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_A ) {
                 PAG::Camara::getInstancia().pan(true);
             }
-            if ( key == GLFW_KEY_D && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_D ) {
                 PAG::Camara::getInstancia().pan(false);
             }
             break;
 
         case PAG::Tilt:
-            if ( key == GLFW_KEY_W && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_W ) {
                 PAG::Camara::getInstancia().tilt(true);
             }
-            if ( key == GLFW_KEY_S && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_S ) {
                 PAG::Camara::getInstancia().tilt(false);
             }
 
             break;
 
         case PAG::Dolly:
-            if ( key == GLFW_KEY_W && action == GLFW_PRESS ) {
-                PAG::Camara::getInstancia().dolly(PAG::Delante);
+            if ( key == GLFW_KEY_W ) {
+                PAG::Camara::getInstancia().dolly(PAG::xPos);
             }
-            if ( key == GLFW_KEY_S && action == GLFW_PRESS ) {
-                PAG::Camara::getInstancia().dolly(PAG::Detras);
+            if ( key == GLFW_KEY_S ) {
+                PAG::Camara::getInstancia().dolly(PAG::xNeg);
             }
-            if ( key == GLFW_KEY_A && action == GLFW_PRESS ) {
-                PAG::Camara::getInstancia().dolly(PAG::Izquierda);
+            if ( key == GLFW_KEY_A ) {
+                PAG::Camara::getInstancia().dolly(PAG::zPos);
             }
-            if ( key == GLFW_KEY_D && action == GLFW_PRESS ) {
-                PAG::Camara::getInstancia().dolly(PAG::Derecha);
+            if ( key == GLFW_KEY_D ) {
+                PAG::Camara::getInstancia().dolly(PAG::zNeg);
             }
             break;
 
         case PAG::Crane:
-            if ( key == GLFW_KEY_W && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_W ) {
                 PAG::Camara::getInstancia().crane(true);
             }
-            if ( key == GLFW_KEY_S && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_S ) {
                 PAG::Camara::getInstancia().crane(false);
             }
             break;
 
         case PAG::Orbit:
-            if ( key == GLFW_KEY_A && action == GLFW_PRESS ) {
-                PAG::Camara::getInstancia().orbit(true);
+            if ( key == GLFW_KEY_W ) {
+                PAG::Camara::getInstancia().orbit(PAG::latNeg);
             }
-            if ( key == GLFW_KEY_D && action == GLFW_PRESS ) {
-                PAG::Camara::getInstancia().orbit(false);
+            if ( key == GLFW_KEY_S ) {
+                PAG::Camara::getInstancia().orbit(PAG::latPos);
+            }
+            if ( key == GLFW_KEY_A ) {
+                PAG::Camara::getInstancia().orbit(PAG::lonNeg);
+            }
+            if ( key == GLFW_KEY_D ) {
+                PAG::Camara::getInstancia().orbit(PAG::lonPos);
             }
             break;
 
         case PAG::Zoom:
-            if ( key == GLFW_KEY_W && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_W ) {
                 PAG::Camara::getInstancia().zoom(true);
             }
-            if ( key == GLFW_KEY_S && action == GLFW_PRESS ) {
+            if ( key == GLFW_KEY_S ) {
                 PAG::Camara::getInstancia().zoom(false);
             }
             break;
 
     }
-
-
-
-
-
-
 
     // Aquí se añadirá la comunicación del evento de tecla con la GUI en caso de que vayamos a usarlo
 }
@@ -294,7 +294,7 @@ int main() {
         PAG::Renderer::getInstancia().refrescar_escena(
             PAG::Camara::getInstancia().get_punto_pos_camara(),
             PAG::Camara::getInstancia().get_punto_la(),
-            {0,1,0}, // TODO Upvector aquí
+            PAG::Camara::getInstancia().get_vector_v(),
             PAG::Camara::getInstancia().get_fov_y_grados(),
             PAG::Camara::getInstancia().get_aspect_ratio(),
             PAG::Camara::getInstancia().get_dist_plano_near(),

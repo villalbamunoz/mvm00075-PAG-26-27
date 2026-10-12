@@ -73,11 +73,11 @@ namespace PAG {
 
 
         // Calculamos las matrices de visión y proyección
-        glm::mat4 matrizVision = glm::lookAt(puntoPosCamara, puntoLA, upVector);
+        glm::mat4 matrizVision = glm::lookAt(puntoPosCamara, puntoLA, {0,1,0});
         glm::mat4 matrizProyeccion = glm::perspective(glm::radians(fovYGrados), aspectRatio, distZNear, distZFar);
 
         // Creamos la matriz compuesta por la de visión y proyección
-        glm::mat4 matrizCompuesta = matrizProyeccion * matrizVision; // TODO Puede que haga falta normalizar el resultado
+        glm::mat4 matrizCompuesta = matrizProyeccion * matrizVision;
 
 
         // Pasamos la matriz como uniform al vertex shader

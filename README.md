@@ -66,7 +66,7 @@ Además de poder controlarse con el ratón, cada movimiento puede controlarse ta
 - Tilt: W y S
 - Dolly: W, A, S y D
 - Crane: W y S
-- Orbit: A y D
+- Orbit: W, A, S y D
 - Zoom: W y S
 
-Se han elegido estas combinaciones por convención, al ser las más usadas en videojuegos y existir la asociación W-delante, S-atrás, A-izquierda y D-Derecha.
+Se han elegido estas combinaciones por convención, al ser las más usadas en videojuegos y existir la asociación W-delante-arriba, S-detrás-abajo, A-izquierda y D-Derecha.

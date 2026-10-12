@@ -170,7 +170,8 @@ namespace PAG {
 
     /**
      * Dibuja la ventana para seleccionar el movimiento actual de la cámara.
-     * TODO Comentar posibles parámetros
+     * @param movimiento_seleccionado: Opción del enumerado MovimientoCamara que indica cuál es el movimiento
+     * elegido actualmente, para pintar sus instrucciones en la ventana.
      */
     void GUI::dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado) {
         // Indicamos la posición de la ventana que vamos a dibujar
@@ -190,15 +191,12 @@ namespace PAG {
                 case Ninguno:
                     indice_seleccionado = 0;
                     break;
-
                 case Pan:
                     indice_seleccionado = 1;
                     break;
-
                 case Tilt:
                     indice_seleccionado = 2;
                     break;
-
                 case Dolly:
                     indice_seleccionado = 3;
                     break;
@@ -246,7 +244,7 @@ namespace PAG {
                     break;
                 case 5:
                     // Orbit
-                    ImGui::Text("Orbit: teclas A y D");
+                    ImGui::Text("Orbit: teclas W, A, S y D");
                     *movimiento_seleccionado = Orbit;
                     break;
 
