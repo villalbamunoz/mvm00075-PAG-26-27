@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <glm/gtx/transform.hpp>
-
+#include <glm/gtc/epsilon.hpp>
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
     Camara* Camara::instancia = nullptr;
@@ -200,8 +200,20 @@ namespace PAG {
      */
     glm::vec3 Camara::get_vector_u() {
         // El vector u se obtiene haciendo el producto vectorial de Y por n, y normalizando el resultado.
+        /* Cuando los vectores n e Y son colineales (por ejemplo: el vector Y vale (0,1,0), y orientamos la cámara
+         * para que mire completamente hacia arriba o hacia abajo), su producto vectorial es (0,0,0), y no se pueden
+         * calcular el resto de vectores del sistema de coordenadas. En nuestro código tendremos que añadir
+         * comprobaciones para esta situación, y resolverlas de la manera adecuada. Una forma de hacerlo es
+         * sustituyendo Y por Z (0,0,1) en el producto vectorial*/
+
+        glm::bvec3 vector_bool = glm::epsilonEqual({0,1,0}, get_vector_n(), 0.005f);
+
+        if (glm::all(vector_bool)) {
+            // Ambos vectores son iguales componente a componente, usamos Z en vez de Y para el producto vectorial
+            return glm::normalize( glm::cross({0,0,1}, get_vector_n()));
+        }
+        // Si no son iguales, devolvemos el cálculo normal
         return glm::normalize( glm::cross({0,1,0}, get_vector_n()));
-        // TODO Aquí puede colocarse la comprobación de que no se llegue a "n = Y" y su correspondiente solución
     }
 
     /**
@@ -211,6 +223,4 @@ namespace PAG {
         // Una vez tenemos calculados n y u, el vector v se obtiene como el producto vectorial de estos dos vectores
         return glm::cross(get_vector_n(), get_vector_u());
     }
-
-
-} // PAG
+}
