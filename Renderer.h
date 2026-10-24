@@ -1,17 +1,25 @@
 #ifndef MVM00075_PAG_RENDERER_H
 #define MVM00075_PAG_RENDERER_H
+#include <list>
 #include <string>
 #include "glad/glad.h"
 #include <glm/glm.hpp>
+
+#include "Modelo.h"
 #include "ProgramShader.h"
 
 namespace PAG {
     class Renderer {
     private:
+        // Necesidades del singleton
+        Renderer();
         static  Renderer* instancia;
+
+        // Color del frame buffer, el del fondo de la pantalla
         float colorBorradoFrameBuffer[3] = {0.5f, 0.5f, 0.5f};
-        ProgramShader* programShader;
-        std::string nombreShaders = "pag05"; // Inicializamos a un shader predeterminado
+
+        // Gestión de modelo
+        std::vector<Modelo> modelosEnEscena;
 
 
         // Identificadores de objetos de OpenGL
@@ -20,7 +28,7 @@ namespace PAG {
         GLuint idVBOcolores = 0; // Identificador del vertex buffer object de colores
         GLuint idIBO = 0; // Identificador del index buffer object
 
-        Renderer();
+
 
 
     public:
@@ -37,13 +45,20 @@ namespace PAG {
         void set_color_borrado_frame_buffer(float r, float g, float b, float a);
         float* get_color_borrado_frame_buffer();
         std::string get_propiedades_del_contexto();
-        void set_nombre_shaders(std::string texto) {nombreShaders = texto;};
-        std::string* get_direccion_nombre_shaders() {return &nombreShaders;};
+        void set_nombre_shaders(std::string texto, int posModelo) {}; // TODO Implementar en cpp y documentar
 
-        // Modelado básico
-        void creaShaderProgram();
-        void creaModelo();
+        // TODO Quitar placeholder
+        std::string placeholder = "pag05";
+        std::string* get_direccion_nombre_shaders() {return &placeholder;}
+
+
+        void creaShadersPrograms();
+        void cargarModelosPredeterminados();
         void inicializaOpenGL();
+
+        // Gestión de modelos en escena
+        void anadirModelo(std::string ruta);
+        void anadirModelosPredeterminados();
 
     };
 } // PAG

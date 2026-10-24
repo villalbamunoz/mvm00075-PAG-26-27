@@ -36,11 +36,8 @@ namespace PAG {
         { glDeleteVertexArrays ( 1, &idVAO );
         }
 
-        if (programShader != nullptr) {
-            // Esta llamada a destructor desencadena el borrado de objetos de OpenGL en la clase Shader
-            delete programShader;
-            programShader = nullptr;
-        }
+
+        // TODO Borrar correctamente la ED de modelos en escena (si es que es necesario hacer algo en especial)
     }
 
     /**
@@ -56,8 +53,9 @@ namespace PAG {
     }
 
     /**
-    * Méto_do para hacer el refresco de la escena
-    * Toma como parámetros los necesarios para calcular las matrices de visión y proyección en perspectiva
+    * Méto_do para hacer el refresco de la escena.
+    * Toma como parámetros los necesarios para calcular las matrices de visión y proyección en perspectiva, la cual
+    * proporciona a cada modelo para que las aplique.
     */
     void Renderer::refrescar_escena (glm::vec3 puntoPosCamara, glm::vec3 puntoLA, glm::vec3 upVector, glm::float32 fovYGrados,
             glm::float32 aspectRatio, glm::float32 distZNear, glm::float32 distZFar)
@@ -65,12 +63,8 @@ namespace PAG {
         // Limpiamos los buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glPolygonMode ( GL_FRONT_AND_BACK, GL_FILL );
-
-        // Activamos nuestro shader program
-        glUseProgram ( programShader->getIdOpenGL());
-
-
+        // Dibujamos los modelos como malla de alambre
+        glPolygonMode ( GL_FRONT_AND_BACK, GL_LINE );
 
         // Calculamos las matrices de visión y proyección
         glm::mat4 matrizVision = glm::lookAt(puntoPosCamara, puntoLA, {0,1,0});
@@ -79,27 +73,12 @@ namespace PAG {
         // Creamos la matriz compuesta por la de visión y proyección
         glm::mat4 matrizCompuesta = matrizProyeccion * matrizVision;
 
-
-        // Pasamos la matriz como uniform al vertex shader
-        std::string nombreUniform = "matrizModeladoVisionProyeccion"; // Mismo nombre que hemos puesto en el shader
-        GLint posicion = glGetUniformLocation ( programShader->getIdOpenGL(), nombreUniform.c_str () );
-
-        if ( posicion != -1 )
-        {  // El uniform existe y se ha podido localizar correctamente
-            glUniformMatrix4fv ( posicion, 1, GL_FALSE, &matrizCompuesta[0][0] );
+        // Recorremos los modelos y refrescamos cada uno, pasando la matriz compuesta como parámetro
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            modelosEnEscena[i].refrescarModelo(matrizCompuesta);
         }
 
 
-
-
-        // Activamos nuestro VAO
-        glBindVertexArray (idVAO);
-
-        // Indicamos el IBO a usar
-        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
-
-        // Comenzamos el proceso de rendering
-        glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr );
     }
 
     /**
@@ -163,97 +142,40 @@ namespace PAG {
 
 
     /**
-    * Méto_do para crear, compilar y enlazar el shader program
-    * @note No se incluye ninguna comprobación de errores
+    * TODO Documentar
     */
-    void Renderer::creaShaderProgram() {
-        // Obtenemos los nombres de los shaders
-        std::string nombre_vs;
-        std::string nombre_fs;
-        // Un nombre puede ser ../pag03-vs.glsl
-        nombre_vs.append("../");
-        nombre_fs.append("../");
-        nombre_vs.append(nombreShaders);
-        nombre_fs.append(nombreShaders);
-        nombre_vs.append("-vs.glsl");
-        nombre_fs.append("-fs.glsl");
-
-        // Creamos los shaders
-        programShader = new ProgramShader();
-        programShader->cargarVertexShader(nombre_vs);
-        programShader->cargarFragmentShader(nombre_fs);
-        programShader->crearProgramShader();
+    void Renderer::creaShadersPrograms() {
+        // Recorremos los modelos y que cada uno cree su shader program
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            modelosEnEscena[i].creaShaderProgram();
+        }
     }
 
 
     /**
-    * Méto_do para crear el VAO para el modelo a renderizar
+    * Méto_do para crear el VAO predeterminado de los modelos
     * @note No se incluye ninguna comprobación de errores
     */
-    void PAG::Renderer::creaModelo() {
-        GLfloat vertices[] = { -.5, -.5, 0,
-                                .5, -.5, 0,
-                                .0, .5, 0 };
-        GLfloat colores[] = { 1, 0, 0,
-                                0, 1, 0,
-                                0, 0, 1 };
-        GLuint indices[] = { 0, 1, 2 };
+    void Renderer::cargarModelosPredeterminados() {
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            modelosEnEscena[i].cargarModelo();
+        }
+    }
 
-
-        // ------ VAO ------
-        // Creamos el VAO y lo enlazamos. A partir de aquí, todas las órdenes se referirían al VAO
-        glGenVertexArrays ( 1, &idVAO );
-        glBindVertexArray ( idVAO );
-
-
-
-
-        // ------ VBOs ------
-        // Creamos el VBO y lo enlazamos A partir de aquí, todas las órdenes se refieren él
-        glGenBuffers ( 1, &idVBOcoordenadas );
-        glBindBuffer ( GL_ARRAY_BUFFER, idVBOcoordenadas );
-
-        // Entregamos la información para añadir al VBO el atributo coordenadas
-        glBufferData ( GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices, GL_STATIC_DRAW );
-
-        // Indicamos a OpenGL cómo están organizados los datos del atributo coordenadas de vértice en el VBO activo
-        // Usamos el índice 0 para las coordenadas
-        glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), nullptr );
-
-        // Activamos el atributo coordenadas almacenado en el VBO
-        glEnableVertexAttribArray ( 0 );
-
-
-        // Creamos el VBO de colores y lo enlazamos A partir de aquí, todas las órdenes se refieren él
-        glGenBuffers ( 1, &idVBOcolores );
-        glBindBuffer ( GL_ARRAY_BUFFER, idVBOcolores );
-
-        // Entregamos la información para añadir al VBO el atributo color
-        glBufferData ( GL_ARRAY_BUFFER, 9*sizeof(GLfloat), colores, GL_STATIC_DRAW );
-
-        // Indicamos a OpenGL cómo están organizados los datos del atributo color de vértice en el VBO activo
-        // Usamos el índice 1 para el color
-        glVertexAttribPointer ( 1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), nullptr );
-
-        // Activamos el atributo color almacenado en el VBO
-        glEnableVertexAttribArray ( 1 );
-
-
-
-        // ------ IBO ------
-        // Creamos el IBO y lo enlazamos. A partir de aquí, todas las órdenes se refieren al IBO
-        glGenBuffers ( 1, &idIBO );
-        glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
-
-        // Entregamos los vértices para llenar el IBO
-        glBufferData ( GL_ELEMENT_ARRAY_BUFFER, 3*sizeof(GLuint), indices, GL_STATIC_DRAW );
+    /**
+     * TODO Documentar
+     */
+    void Renderer::anadirModelosPredeterminados() {
+        // TODO Incluir varios y esparcirlos de forma aleatoria por la escena
+        Modelo modeloParaInsertar("../modelos/Panther.obj");
+        modelosEnEscena.push_back(modeloParaInsertar);
     }
 
 
     /**
     * Méto_do para inicializar los parámetros globales de OpenGL
     */
-    void PAG::Renderer::inicializaOpenGL ( )
+    void Renderer::inicializaOpenGL ( )
     { glClearColor ( colorBorradoFrameBuffer[0],
         colorBorradoFrameBuffer[1],
         colorBorradoFrameBuffer[2],
@@ -263,6 +185,17 @@ namespace PAG {
     }
 
 
+    /**
+     * Añade un modelo a la escena a partir de la ruta a su fichero .obj.
+     */
+    void Renderer::anadirModelo(std::string ruta) {
+        // TODO Quitar el placeholder, usar la ruta
+
+        // TODO Comprobar si hay que cambiar el tratamiento de la ruta, según nos lo de la librería para cargar ficheros
+        // Modelo modeloParaInsertar("../modelos/Panther.obj");
 
 
+        // modelosEnEscena.push_back(modeloParaInsertar);
+
+    }
 }

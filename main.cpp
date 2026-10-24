@@ -1,5 +1,7 @@
-// TODO Explicar la sesión 5 en el README.md
+// TODO Explicar la sesión 6 en el README.md
+// TODO Añadir UML
 // TODO Arreglar que las ventanas no sean redimensionables
+// TODO Quitar todos los std::cout y std::cerr de todos los archivos
 #include <iostream>
 #include "Renderer.h"
 #include "GUI.h"
@@ -361,13 +363,15 @@ int main() {
 
 
 
-    // Antes del ciclo de eventos creamos el modelo predeterminado del triángulo, capturando las posibles excepciones
+    // Antes del ciclo de eventos cargamos los modelos predeterminados, capturando las posibles excepciones
     try {
-        PAG::Renderer::getInstancia().creaShaderProgram ();
-        PAG::Renderer::getInstancia().creaModelo ();
+        PAG::Renderer::getInstancia().anadirModelosPredeterminados();
+        PAG::Renderer::getInstancia().creaShadersPrograms();
+        PAG::Renderer::getInstancia().cargarModelosPredeterminados();
 
         PAG::Renderer::getInstancia().inicializaOpenGL();
     } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
         PAG::GUI::getInstancia().anadir_mensaje(e.what());
     }
 
@@ -393,6 +397,8 @@ int main() {
             PAG::Camara::getInstancia().get_dist_plano_far()
             );
 
+
+
         PAG::GUI::getInstancia().crear_frame();
         PAG::GUI::getInstancia().dibujar_ventana_mensajes();
 
@@ -404,9 +410,10 @@ int main() {
 
         if (hay_que_recargar_shaders) {
             try {
-                PAG::Renderer::getInstancia().creaShaderProgram();
+                PAG::Renderer::getInstancia().creaShadersPrograms();
 
             } catch (std::exception &e) {
+                std::cout << e.what() << std::endl;
                 PAG::GUI::getInstancia().anadir_mensaje(e.what());
             }
             hay_que_recargar_shaders = false; // Ya hemos recargado el shader, no hace falta seguir haciéndolo

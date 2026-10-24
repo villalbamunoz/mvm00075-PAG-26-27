@@ -28,7 +28,7 @@ namespace PAG {
         void crear_frame();
         void renderizar_frame();
 
-        // Dibujado de ventanas
+        // Dibujado de ventanas TODO todas las de la practica 6
         void dibujar_ventana_mensajes();
         void dibujar_ventana_seleccion_color(float* color);
         void dibujar_ventana_entrada_texto(std::string* texto, bool *cambio);

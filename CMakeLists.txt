@@ -12,6 +12,8 @@ file( GLOB IMGUI_FILES imgui/src/*.cpp imgui/include/imgui_stdlib.h ) # Código 
 add_executable( ${PROJECT_NAME} ${MY_FILES}
                 ${GLAD_FILES}
                 ${IMGUI_FILES}
+        Modelo.cpp
+        Modelo.h
 
 )
 
@@ -19,3 +21,5 @@ add_executable( ${PROJECT_NAME} ${MY_FILES}
 target_include_directories( ${PROJECT_NAME} PUBLIC GLAD/include imgui/include)
 
 target_link_libraries( ${PROJECT_NAME} GL glfw )
+
+target_link_libraries(${PROJECT_NAME} assimp)
