@@ -131,7 +131,7 @@ namespace PAG {
      * @param texto Puntero a string que contendrá el texto introducido en la ventana por el usuario
      * @param cambio Puntero a bool que la función marcará a True si se ha intentado cargar nuevo nombre de shaders
      */
-    void GUI::dibujar_ventana_entrada_texto(std::string* texto, bool *cambio) {
+    void GUI::dibujar_ventana_entrada_nombre_shaders(std::string* texto, bool *cambio) {
         // Indicamos la posición de la ventana que vamos a dibujar
         ImGui::SetNextWindowPos ( ImVec2 (10, 325), ImGuiCond_Once );
 
@@ -188,7 +188,7 @@ namespace PAG {
             int indice_seleccionado;
             // "Traducimos" de enum a entero según el orden en el que los movimientos aparecen en el selector
             switch (*movimiento_seleccionado) {
-                case Ninguno:
+                case sinMovCamara:
                     indice_seleccionado = 0;
                     break;
                 case Pan:
@@ -216,11 +216,11 @@ namespace PAG {
             }
 
             // Pintamos el selector de movimiento
-            if ( _changedM = ImGui::Combo ( "##MovType", (int*)&indice_seleccionado,
-                "Niguno\0Pan\0Tilt\0Dolly\0Crane\0Orbit\0Zoom\0\0" ) ) {
+            if ( _changedM = ImGui::Combo ( "##Movimiento", (int*)&indice_seleccionado,
+                "Ninguno\0Pan\0Tilt\0Dolly\0Crane\0Orbit\0Zoom\0\0" ) ) {
             }
 
-            // Pintamos las instrucciones
+            // Pintamos las instrucciones y marcamos el movimiento en el puntero
             switch (indice_seleccionado) {
                 case 1:
                     // Pan
@@ -255,7 +255,7 @@ namespace PAG {
                     break;
                 default:
                     ImGui::Text("Aquí aparecerán los controles");
-                    *movimiento_seleccionado = Ninguno;
+                    *movimiento_seleccionado = sinMovCamara;
                     break;
             }
 
@@ -266,6 +266,174 @@ namespace PAG {
 
     }
 
+    /**
+     * TODO Documentar
+     * @param rutasModelos
+     * @param hayTransformacion
+     * @param transformacion
+     * @param sentido
+     */
+    void GUI::dibujar_ventana_transformacion_modelado(std::vector<std::string> rutasModelos, bool* hayTransformacion,
+                                                      TransformacionModelado* transformacionSeleccionada, bool* sentido,
+                                                      std::string* rutaModeloSeleccionado
+                                                      ) {
+        // Indicamos la posición de la ventana que vamos a dibujar
+        ImGui::SetNextWindowPos ( ImVec2 (700, 50), ImGuiCond_Once );
+
+
+        if ( ImGui::Begin("Transformación de modelado")){
+            // La ventana está desplegada
+            ImGui::SetWindowSize(ImVec2 (300, 200));
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+
+            // --- SELECTOR DE MODELO ---
+            // Variables necesarias para el selector de modelo
+            bool changedMRutaModelo;
+            int indiceRutaModeloSeleccionado = -1;
+
+            // Obtenemos el índice del modelo
+            for (int i = 0; i < rutasModelos.size(); ++i) {
+                if (rutasModelos[i] == *rutaModeloSeleccionado) {
+                    indiceRutaModeloSeleccionado = i;
+                }
+            }
+
+            // Comprobación de posible error
+            if (indiceRutaModeloSeleccionado == -1) {
+                throw std::runtime_error("[GUI::dibujar_ventana_transformacion_modelado] No se ha encontrado el modelo seleccionado entre los cargados");
+            }
+
+            // Para tener opciones variables en un combo no nos sirve ImGui::Combo
+            if (ImGui::BeginCombo("##Modelo", rutasModelos[indiceRutaModeloSeleccionado].c_str(), 0)) {
+                for (int i = 0; i < rutasModelos.size(); ++i) {
+                    const bool isSelected = (indiceRutaModeloSeleccionado == i);
+                    if (ImGui::Selectable(rutasModelos[i].c_str(), isSelected)) {
+                        indiceRutaModeloSeleccionado = i;
+                    }
+
+                    // Set the initial focus when opening the combo
+                    // (scrolling + keyboard navigation focus)
+                    if (isSelected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            // Actualizamos el puntero con la selección hecha
+            *rutaModeloSeleccionado = rutasModelos[indiceRutaModeloSeleccionado];
+
+
+
+
+
+            // --- SELECTOR DE TRANSFORMACIÓN ---
+            // Variables necesarias para el selector de transformacion
+            bool changedMTransformacion;
+            int indiceTransformacionSeleccionado;
+            // "Traducimos" de enum a entero según el orden en el que los movimientos aparecen en el selector
+            switch (*transformacionSeleccionada) {
+                case escalar:
+                    indiceTransformacionSeleccionado = 1;
+                    break;
+                case rotarSobreEjeX:
+                    indiceTransformacionSeleccionado = 2;
+                    break;
+                case rotarSobreEjeY:
+                    indiceTransformacionSeleccionado = 3;
+                    break;
+                case rotarSobreEjeZ:
+                    indiceTransformacionSeleccionado = 4;
+                    break;
+                case trasladarEnEjeX:
+                    indiceTransformacionSeleccionado = 5;
+                    break;
+                case trasladarEnEjeY:
+                    indiceTransformacionSeleccionado = 6;
+                    break;
+                case trasladarEnEjeZ:
+                    indiceTransformacionSeleccionado = 7;
+                    break;
+                default:
+                    indiceTransformacionSeleccionado = 0;
+                    break;
+
+            }
+
+            // Pintamos el selector de transformación
+            if ( changedMTransformacion = ImGui::Combo ( "##Transformación", (int*)&indiceTransformacionSeleccionado,
+                                                         "escalar\0rotarSobreEjeX\0rotarSobreEjeY\0rotarSobreEjeZ\0trasladarEnEjeX\0trasladarEnEjeY\0trasladarEnEjeZ\0\0" ) ) {
+            }
+
+            // Marcamos la transformación en el puntero
+            switch (indiceTransformacionSeleccionado) {
+                case 1:
+                    *transformacionSeleccionada = escalar;
+                    break;
+                case 2:
+                    *transformacionSeleccionada = rotarSobreEjeX;
+                    break;
+                case 3:
+                    *transformacionSeleccionada = rotarSobreEjeY;
+                    break;
+                case 4:
+                    *transformacionSeleccionada = rotarSobreEjeZ;
+                    break;
+                case 5:
+                    *transformacionSeleccionada = trasladarEnEjeX;
+                    break;
+                case 6:
+                    *transformacionSeleccionada = trasladarEnEjeY;
+                    break;
+                case 7:
+                    *transformacionSeleccionada = trasladarEnEjeZ;
+                    break;
+                default:
+                    *transformacionSeleccionada = sinTransModelado;
+                    break;
+            }
+
+
+
+            // --- BOTONES PARA APLICAR TRANSFORMACIÓN ---
+            // Pintamos los botones
+            // Botón para ir en sentido positivo
+            static int clickedPos = 0;
+            if (ImGui::Button("+"))
+                clickedPos++;
+            if (clickedPos & 1)
+            {
+                // Indicamos que hay que volver a cargar los shaders
+                *hayTransformacion = true;
+                *sentido = true;
+
+                // Con estas líneas podríamos incluir feedback visual por pantalla
+                // ImGui::SameLine();
+                // ImGui::Text("Texto feedback");
+            }
+
+            // Botón para ir en sentido negativo
+            ImGui::SameLine(); // Lo colocamos en la misma línea que el anterior botón
+            static int clickedNeg = 0;
+            if (ImGui::Button("-"))
+                clickedNeg++;
+            if (clickedNeg & 1)
+            {
+                // Indicamos que hay que volver a cargar los shaders
+                *hayTransformacion = true;
+                *sentido = false;
+
+                // Con estas líneas podríamos incluir feedback visual por pantalla
+                // ImGui::SameLine();
+                // ImGui::Text("Texto feedback");
+            }
+
+
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+
+    }
 
 
     /*

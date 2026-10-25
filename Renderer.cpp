@@ -167,8 +167,11 @@ namespace PAG {
      */
     void Renderer::anadirModelosPredeterminados() {
         // TODO Incluir varios y esparcirlos de forma aleatoria por la escena
-        Modelo modeloParaInsertar("../modelos/Panther.obj");
-        modelosEnEscena.push_back(modeloParaInsertar);
+        Modelo modeloParaInsertar1("../modelos/Panther.obj");
+        modelosEnEscena.push_back(modeloParaInsertar1);
+
+        Modelo modeloParaInsertar2("../modelos/dado.obj");
+        modelosEnEscena.push_back(modeloParaInsertar2);
     }
 
 
@@ -196,6 +199,69 @@ namespace PAG {
 
 
         // modelosEnEscena.push_back(modeloParaInsertar);
+
+    }
+
+    /**
+     * Devuelve un vector de strings con las rutas a los modelos cargados actualmente
+     */
+    std::vector<std::string> Renderer::getRutasModelos() {
+        std::vector<std::string> rutas;
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            rutas.push_back(modelosEnEscena[i].getRuta());
+        }
+        return rutas;
+    }
+
+    void Renderer::aplicarTransformacion(std::string rutaModelo, TransformacionModelado transformacion, bool sentido) {
+        // Obtenemos el índice del modelo seleccionado
+        int indiceAfectado = -1;
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            if (modelosEnEscena[i].getRuta() == rutaModelo) {
+                indiceAfectado = i;
+            }
+        }
+
+        // Comprobación de posible error
+        if (indiceAfectado == -1) {
+            throw std::runtime_error("[Renderer::aplicarTransformacion] No se ha encontrado el modelo a transformar");
+        }
+
+        // Llamamos a la transformación pedida sobre el modelo pedido
+        switch (transformacion) {
+            case escalar: {
+                modelosEnEscena[indiceAfectado].escalar(sentido);
+                break;
+            }
+            case   rotarSobreEjeX: {
+                modelosEnEscena[indiceAfectado].rotarSobreEjeX(sentido);
+                break;
+            }
+            case rotarSobreEjeY: {
+                modelosEnEscena[indiceAfectado].rotarSobreEjeY(sentido);
+                break;
+            }
+            case rotarSobreEjeZ: {
+                modelosEnEscena[indiceAfectado].rotarSobreEjeZ(sentido);
+                break;
+            }
+            case trasladarEnEjeX: {
+                modelosEnEscena[indiceAfectado].trasladarEnEjeX(sentido);
+                break;
+            }
+            case trasladarEnEjeY: {
+                modelosEnEscena[indiceAfectado].trasladarEnEjeY(sentido);
+                break;
+            }
+            case trasladarEnEjeZ: {
+                modelosEnEscena[indiceAfectado].trasladarEnEjeZ(sentido);
+                break;
+            }
+            default: {
+                break;
+            }
+
+        }
 
     }
 }

@@ -12,9 +12,6 @@ file( GLOB IMGUI_FILES imgui/src/*.cpp imgui/include/imgui_stdlib.h ) # Código 
 add_executable( ${PROJECT_NAME} ${MY_FILES}
                 ${GLAD_FILES}
                 ${IMGUI_FILES}
-        Modelo.cpp
-        Modelo.h
-
 )
 
 # Indica directorios (adicionales a los por defecto) para buscar includes

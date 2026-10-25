@@ -13,6 +13,7 @@ namespace PAG {
      */
     void Modelo::escalar(bool agrandar) {
         // TODO Implementar
+        std::cout << "escalar"  << std::endl;
     }
 
     /**
@@ -20,6 +21,7 @@ namespace PAG {
      */
     void Modelo::rotarSobreEjeX(bool sentido) {
         // TODO Implementar
+        std::cout << "rotarSobreEjeX"  << std::endl;
     }
 
 
@@ -28,6 +30,7 @@ namespace PAG {
      */
     void Modelo::rotarSobreEjeY(bool sentido) {
         // TODO Implementar
+        std::cout << "rotarSobreEjeY"  << std::endl;
     }
 
     /**
@@ -35,6 +38,7 @@ namespace PAG {
      */
     void Modelo::rotarSobreEjeZ(bool sentido) {
         // TODO Implementar
+        std::cout << "rotarSobreEjeZ"  << std::endl;
     }
 
     /**
@@ -42,6 +46,7 @@ namespace PAG {
      */
     void Modelo::trasladarEnEjeX(bool sentido) {
         // TODO Implementar
+        std::cout << "trasladarEnEjeX"  << std::endl;
     }
 
     /**
@@ -49,6 +54,7 @@ namespace PAG {
      */
     void Modelo::trasladarEnEjeY(bool sentido) {
         // TODO Implementar
+        std::cout << "trasladarEnEjeY"  << std::endl;
     }
 
     /**
@@ -56,6 +62,7 @@ namespace PAG {
      */
     void Modelo::trasladarEnEjeZ(bool sentido) {
         // TODO Implementar
+        std::cout << "trasladarEnEjeZ"  << std::endl;
     }
 
     /**

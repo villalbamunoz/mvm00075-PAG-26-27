@@ -4,11 +4,14 @@
 #include <string>
 #include "glad/glad.h"
 #include <glm/glm.hpp>
+#include "enumerados.h"
+
 
 #include "Modelo.h"
 #include "ProgramShader.h"
 
 namespace PAG {
+
     class Renderer {
     private:
         // Necesidades del singleton
@@ -46,12 +49,13 @@ namespace PAG {
         float* get_color_borrado_frame_buffer();
         std::string get_propiedades_del_contexto();
         void set_nombre_shaders(std::string texto, int posModelo) {}; // TODO Implementar en cpp y documentar
+        std::vector<std::string> getRutasModelos();
 
         // TODO Quitar placeholder
         std::string placeholder = "pag05";
         std::string* get_direccion_nombre_shaders() {return &placeholder;}
 
-
+        // Generales
         void creaShadersPrograms();
         void cargarModelosPredeterminados();
         void inicializaOpenGL();
@@ -59,6 +63,7 @@ namespace PAG {
         // Gestión de modelos en escena
         void anadirModelo(std::string ruta);
         void anadirModelosPredeterminados();
+        void aplicarTransformacion(std::string rutaModelo, TransformacionModelado transformacion, bool sentido);
 
     };
 } // PAG

@@ -5,12 +5,11 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <string>
-
+#include <vector>
+#include "enumerados.h"
 namespace PAG {
 
-    enum MovimientoCamara {
-        Ninguno, Pan, Tilt, Dolly, Crane, Orbit, Zoom
-      }; 
+
 
     class GUI {
     private:
@@ -31,8 +30,10 @@ namespace PAG {
         // Dibujado de ventanas TODO todas las de la practica 6
         void dibujar_ventana_mensajes();
         void dibujar_ventana_seleccion_color(float* color);
-        void dibujar_ventana_entrada_texto(std::string* texto, bool *cambio);
+        void dibujar_ventana_entrada_nombre_shaders(std::string* texto, bool *cambio);
         void dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado);
+        void dibujar_ventana_transformacion_modelado(std::vector<std::string> rutasModelos, bool* hayTransformacion,
+            TransformacionModelado* transformacionSeleccionada, bool* sentido, std::string* rutaModeloSeleccionado);
 
         void anadir_mensaje(std::string mensaje);
 

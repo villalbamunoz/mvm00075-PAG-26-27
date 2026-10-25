@@ -7,7 +7,8 @@
 #include <glm/glm.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include <assimp/postprocess.h> // Esta es necesaria aunque Clion indique lo contrario
+#include "enumerados.h"
 
 
 
@@ -52,6 +53,9 @@ namespace PAG {
 
         // Función auxiliar para carga de modelos .obj
         void procesarNodo(aiNode *nodo, const aiScene *escena);
+
+        // Getters y setters
+        std::string getRuta() {return rutaOBJ;};
 
     };
 } // PAG

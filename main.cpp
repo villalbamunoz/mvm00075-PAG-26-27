@@ -7,16 +7,19 @@
 #include "GUI.h"
 
 #include <bits/stdc++.h> // Necesario para generar enteros aleatorios
+#include "enumerados.h"
 
 
 // IMPORTANTE: El include de GLAD debe estar siempre ANTES de el de GLFW
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include "Camara.h"
 
-// Variables globales
+// --- VARIABLES GLOBALES ---
 PAG::MovimientoCamara movimiento_camara = PAG::Pan; // Este será el movimiento predeterminado
+PAG::TransformacionModelado transformacion_modelado = PAG::escalar; // Transformación predeterminada
+bool sentido_transformacion_modelado = true; // Sentido de transformación de modelado predeterminado
+std::string ruta_obj_seleccionado = "../modelos/Panther.obj"; // Colocamos uno de los objetos añadidos de forma predeterminada
 bool boton_izq_raton_pulsado = false;
 double pos_x_raton_ultima_pulsacion_tecla_izq = 0;
 double pos_y_raton_ultima_pulsacion_tecla_izq = 0;
@@ -243,7 +246,7 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
                 PAG::Camara::getInstancia().zoom(false);
             }
             break;
-        case PAG::Ninguno:
+        case PAG::sinMovCamara:
             break;
         }
 
@@ -404,7 +407,7 @@ int main() {
 
         // Ventana de selección de shaders
         bool hay_que_recargar_shaders = false;
-        PAG::GUI::getInstancia().dibujar_ventana_entrada_texto(
+        PAG::GUI::getInstancia().dibujar_ventana_entrada_nombre_shaders(
             PAG::Renderer::getInstancia().get_direccion_nombre_shaders(),
             &hay_que_recargar_shaders);
 
@@ -431,6 +434,21 @@ int main() {
         // Ventana de selección de movimiento de la cámara
         PAG::GUI::getInstancia().dibujar_ventana_movimientos_camara(&movimiento_camara);
 
+        // Ventana de selección de transformación de modelado
+        bool hayTransformacion = false;
+        PAG::GUI::getInstancia().dibujar_ventana_transformacion_modelado(
+            PAG::Renderer::getInstancia().getRutasModelos(),
+            &hayTransformacion,
+            &transformacion_modelado,
+            &sentido_transformacion_modelado,
+            &ruta_obj_seleccionado
+        );
+        if (hayTransformacion) {
+            PAG::Renderer::getInstancia().aplicarTransformacion(ruta_obj_seleccionado,
+                transformacion_modelado, sentido_transformacion_modelado);
+        }
+
+        hayTransformacion = false; // Volvemos a colocar a false, para no aplicar la misma transformación en bucle
 
         // Último paso de renderización del frame
         PAG::GUI::getInstancia().renderizar_frame();
