@@ -405,7 +405,9 @@ int main() {
         PAG::GUI::getInstancia().crear_frame();
         PAG::GUI::getInstancia().dibujar_ventana_mensajes();
 
-        // Ventana de selección de shaders
+        // -------------------------------------------------------------------------------------------------------------
+
+        // --- VENTANA DE SELECCIÓN DE SHADERS ---
         bool hay_que_recargar_shaders = false;
         PAG::GUI::getInstancia().dibujar_ventana_entrada_nombre_shaders(
             PAG::Renderer::getInstancia().get_direccion_nombre_shaders(),
@@ -422,7 +424,9 @@ int main() {
             hay_que_recargar_shaders = false; // Ya hemos recargado el shader, no hace falta seguir haciéndolo
         }
 
-        // Ventana de selección de color del fondo
+        // -------------------------------------------------------------------------------------------------------------
+
+        // --- VENTANA DE SELECCIÓN DE COLOR DE FONDO ---
         float* color_borrado_frame_buffer = PAG::Renderer::getInstancia().get_color_borrado_frame_buffer();
         PAG::GUI::getInstancia().dibujar_ventana_seleccion_color(color_borrado_frame_buffer);
         PAG::Renderer::getInstancia().set_color_borrado_frame_buffer(
@@ -431,10 +435,16 @@ int main() {
                        color_borrado_frame_buffer[2],
                        1);
 
-        // Ventana de selección de movimiento de la cámara
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        // --- VENTANA DE SELECCIÓN DE MOVIMIENTO DE LA CÁMARA---
         PAG::GUI::getInstancia().dibujar_ventana_movimientos_camara(&movimiento_camara);
 
-        // Ventana de selección de transformación de modelado
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        // --- VENTANA DE SELECCIÓN DE TRANSFORMACIÓN DE MODELADO
         bool hayTransformacion = false;
         PAG::GUI::getInstancia().dibujar_ventana_transformacion_modelado(
             PAG::Renderer::getInstancia().getRutasModelos(),
@@ -449,6 +459,27 @@ int main() {
         }
 
         hayTransformacion = false; // Volvemos a colocar a false, para no aplicar la misma transformación en bucle
+
+        // -------------------------------------------------------------------------------------------------------------
+
+
+        // --- VENTANA DE CARGA DE NUEVOS MODELOS ---
+        std::string rutaNuevoModelo;
+        PAG::GUI::getInstancia().dibujar_ventana_carga_modelos(&rutaNuevoModelo);
+
+        if (!rutaNuevoModelo.empty()) {
+            // Cargamos el modelo pedido
+            PAG::Renderer::getInstancia().anadirModelo(rutaNuevoModelo);
+
+            // Devolvemos las variables a sus valores iniciales tras la carga
+            rutaNuevoModelo = "";
+        }
+
+
+
+
+        // -------------------------------------------------------------------------------------------------------------
+
 
         // Último paso de renderización del frame
         PAG::GUI::getInstancia().renderizar_frame();

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ostream>
 #include <imgui_stdlib.h>
+
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
     GUI* GUI::instancia = nullptr;
@@ -283,7 +284,7 @@ namespace PAG {
 
         if ( ImGui::Begin("Transformación de modelado")){
             // La ventana está desplegada
-            ImGui::SetWindowSize(ImVec2 (300, 200));
+            ImGui::SetWindowSize(ImVec2 (300, 100));
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
 
             // --- SELECTOR DE MODELO ---
@@ -435,6 +436,54 @@ namespace PAG {
 
     }
 
+    /**
+     * TODO Documentar
+     */
+    void GUI::dibujar_ventana_carga_modelos(std::string* ruta) {
+        // Indicamos la posición de la ventana que vamos a dibujar
+        ImGui::SetNextWindowPos ( ImVec2 (700, 230), ImGuiCond_Once );
+
+
+        if ( ImGui::Begin("Carga de modelos")){
+            ImGui::SetWindowSize(ImVec2 (300, 100));
+
+            // La ventana está desplegada
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+
+            // Pintamos el botón
+            int clickedPos = 0;
+            if (ImGui::Button("Cargar modelo"))
+                clickedPos++;
+            if (clickedPos & 1)
+            {
+                dialogoSeleccionArchivos.Open();
+
+                // Con estas líneas podríamos incluir feedback visual por pantalla
+                // ImGui::SameLine();
+                // ImGui::Text("Modelo cargado");
+            }
+
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+
+
+        dialogoSeleccionArchivos.SetTitle("Selección de fichero OBJ");
+        dialogoSeleccionArchivos.SetTypeFilters({ ".obj" });
+
+        dialogoSeleccionArchivos.Display();
+
+        if(dialogoSeleccionArchivos.HasSelected())
+        {
+            std::cout << "Archivo seleccionado: " << dialogoSeleccionArchivos.GetSelected().string() << std::endl;
+            // Añadimos el modelo a la escena
+
+            *ruta = dialogoSeleccionArchivos.GetSelected().string();
+
+            // Limpiamos la selección
+            dialogoSeleccionArchivos.ClearSelected();
+        }
+    }
 
     /*
      * Añade una cadena de texto a los mensajes de la ventana dedicada a ello

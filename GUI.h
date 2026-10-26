@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include "enumerados.h"
+#include <imfilebrowser.h>
+
 namespace PAG {
 
 
@@ -16,6 +18,7 @@ namespace PAG {
         static GUI* instancia;
         GUI();
         std::string mensajes;
+        ImGui::FileBrowser dialogoSeleccionArchivos;
 
     public:
         static GUI& getInstancia();
@@ -34,6 +37,7 @@ namespace PAG {
         void dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado);
         void dibujar_ventana_transformacion_modelado(std::vector<std::string> rutasModelos, bool* hayTransformacion,
             TransformacionModelado* transformacionSeleccionada, bool* sentido, std::string* rutaModeloSeleccionado);
+        void dibujar_ventana_carga_modelos(std::string* ruta);
 
         void anadir_mensaje(std::string mensaje);
 

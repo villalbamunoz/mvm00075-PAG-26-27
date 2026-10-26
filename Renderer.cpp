@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 #include <fstream>
+#include <iostream>
 #include <ostream>
 #include <sstream>
 
@@ -192,14 +193,12 @@ namespace PAG {
      * Añade un modelo a la escena a partir de la ruta a su fichero .obj.
      */
     void Renderer::anadirModelo(std::string ruta) {
-        // TODO Quitar el placeholder, usar la ruta
-
         // TODO Comprobar si hay que cambiar el tratamiento de la ruta, según nos lo de la librería para cargar ficheros
-        // Modelo modeloParaInsertar("../modelos/Panther.obj");
-
-
-        // modelosEnEscena.push_back(modeloParaInsertar);
-
+        Modelo modeloParaInsertar(ruta);
+        modelosEnEscena.push_back(modeloParaInsertar);
+        modelosEnEscena.back().creaShaderProgram();
+        modelosEnEscena.back().cargarModelo();
+        std::cout << "modelosEnEscena.size(): "<<  modelosEnEscena.size();
     }
 
     /**
