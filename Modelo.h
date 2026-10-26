@@ -19,7 +19,9 @@ namespace PAG {
         std::string rutaOBJ = ""; // Aquí incluimos el modelo predeterminado
         ProgramShader* programShader = nullptr;
         std::string nombreShaders = "pag05"; // Aquí incluimos los shaders predeterminados
-        glm::mat4 matrizTransformacionModelado;
+        glm::mat4 matrizTransformacionModelado = glm::mat4(1); // Este constructor crea la identity matrix
+        glm::vec3 puntoPosModelo = {0.0f,0.0f,0.0f}; // Posicion del modelo
+
 
         // EEDD para guardar los datos del modelo en sí
         std::vector<glm::vec3> vertices;
@@ -31,6 +33,11 @@ namespace PAG {
         GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
         GLuint idIBO = 0; // Identificador del index buffer object
 
+        // Parámetros para indicar la cantidad de las transformaciones de modelado
+        glm::float32 cantidadEscalarPos = 1.5f;
+        glm::float32 cantidadEscalarNeg = 0.75f;
+        glm::float32 gradosRotacion = 1.0f;
+        glm::float32 distTraslacion = 0.01f;
 
 
     public:

@@ -2,26 +2,54 @@
 
 #include <iostream>
 #include <stdexcept>
-
+#include <glm/gtx/transform.hpp>
 
 namespace PAG {
-
-
     /**
      * TODO Documentar
      * @param agrandar
      */
     void Modelo::escalar(bool agrandar) {
-        // TODO Implementar
-        std::cout << "escalar"  << std::endl;
+        if (agrandar) {
+            matrizTransformacionModelado = glm::scale(matrizTransformacionModelado,
+                glm::vec3(cantidadEscalarPos, cantidadEscalarPos, cantidadEscalarPos));
+        } else {
+            matrizTransformacionModelado = glm::scale(matrizTransformacionModelado,
+                glm::vec3(cantidadEscalarNeg, cantidadEscalarNeg, cantidadEscalarNeg));
+        }
     }
 
     /**
      * TODO Documentar
      */
     void Modelo::rotarSobreEjeX(bool sentido) {
-        // TODO Implementar
-        std::cout << "rotarSobreEjeX"  << std::endl;
+         /*Si queremos rotar un modelo tomando como centro de rotación un punto p arbitrario en el espacio,
+         *deberemos en primer lugar trasladar el modelo utilizando como vector de traslación (O - p), siendo O el
+         *origen de coordenadas. Una vez hecha esta traslación, aplicaremos la rotación, y finalmente, volveremos a
+         *trasladar el modelo utilizando como vector de traslación (p - O).*/
+
+        // Matriz de traslación (O - p): Movemos el centro del objeto al origen
+        glm::mat4 mTraslacion1 = glm::translate( glm::vec3(0,0,0) - puntoPosModelo);
+
+        // Matriz de rotación
+        glm::float32 radianesRotacion = glm::radians(gradosRotacion);
+        if (!sentido) {
+            radianesRotacion = -radianesRotacion;
+        }
+        glm::mat4 matrizRotacion= glm::rotate(radianesRotacion, glm::vec3({1,0,0}));
+
+        // Matriz de traslación (p - 0): Devolvemos el centro del objeto a su posición inicial
+        glm::mat4 mTraslacion2 = glm::translate( puntoPosModelo - glm::vec3(0,0,0));
+
+        // Multiplicamos las matrices en el orden inverso al que se van a aplicar
+        glm::mat4 mFinal = mTraslacion2 * matrizRotacion * mTraslacion1;
+
+        // Combinamos la matriz final con la de transformación y modelado actual
+        matrizTransformacionModelado = mFinal * matrizTransformacionModelado;
+
+        // Actualizamos el punto centro del objeto
+        puntoPosModelo = mFinal * glm::vec4(puntoPosModelo, 1.0f);
+
     }
 
 
@@ -29,40 +57,121 @@ namespace PAG {
      * TODO Documentar
      */
     void Modelo::rotarSobreEjeY(bool sentido) {
-        // TODO Implementar
-        std::cout << "rotarSobreEjeY"  << std::endl;
+        /*Si queremos rotar un modelo tomando como centro de rotación un punto p arbitrario en el espacio,
+          *deberemos en primer lugar trasladar el modelo utilizando como vector de traslación (O - p), siendo O el
+          *origen de coordenadas. Una vez hecha esta traslación, aplicaremos la rotación, y finalmente, volveremos a
+          *trasladar el modelo utilizando como vector de traslación (p - O).*/
+
+        // Matriz de traslación (O - p): Movemos el centro del objeto al origen
+        glm::mat4 mTraslacion1 = glm::translate( glm::vec3(0,0,0) - puntoPosModelo);
+
+        // Matriz de rotación
+        glm::float32 radianesRotacion = glm::radians(gradosRotacion);
+        if (!sentido) {
+            radianesRotacion = -radianesRotacion;
+        }
+        glm::mat4 matrizRotacion= glm::rotate(radianesRotacion, glm::vec3({0,1,0}));
+
+        // Matriz de traslación (p - 0): Devolvemos el centro del objeto a su posición inicial
+        glm::mat4 mTraslacion2 = glm::translate( puntoPosModelo - glm::vec3(0,0,0));
+
+        // Multiplicamos las matrices en el orden inverso al que se van a aplicar
+        glm::mat4 mFinal = mTraslacion2 * matrizRotacion * mTraslacion1;
+
+        // Combinamos la matriz final con la de transformación y modelado actual
+        matrizTransformacionModelado = mFinal * matrizTransformacionModelado;
+
+        // Actualizamos el punto centro del objeto
+        puntoPosModelo = mFinal * glm::vec4(puntoPosModelo, 1.0f);
     }
 
     /**
      * TODO Documentar
      */
     void Modelo::rotarSobreEjeZ(bool sentido) {
-        // TODO Implementar
-        std::cout << "rotarSobreEjeZ"  << std::endl;
+        /*Si queremos rotar un modelo tomando como centro de rotación un punto p arbitrario en el espacio,
+         *deberemos en primer lugar trasladar el modelo utilizando como vector de traslación (O - p), siendo O el
+         *origen de coordenadas. Una vez hecha esta traslación, aplicaremos la rotación, y finalmente, volveremos a
+         *trasladar el modelo utilizando como vector de traslación (p - O).*/
+
+        // Matriz de traslación (O - p): Movemos el centro del objeto al origen
+        glm::mat4 mTraslacion1 = glm::translate( glm::vec3(0,0,0) - puntoPosModelo);
+
+        // Matriz de rotación
+        glm::float32 radianesRotacion = glm::radians(gradosRotacion);
+        if (!sentido) {
+            radianesRotacion = -radianesRotacion;
+        }
+        glm::mat4 matrizRotacion= glm::rotate(radianesRotacion, glm::vec3({0,0,1}));
+
+        // Matriz de traslación (p - 0): Devolvemos el centro del objeto a su posición inicial
+        glm::mat4 mTraslacion2 = glm::translate( puntoPosModelo - glm::vec3(0,0,0));
+
+        // Multiplicamos las matrices en el orden inverso al que se van a aplicar
+        glm::mat4 mFinal = mTraslacion2 * matrizRotacion * mTraslacion1;
+
+        // Combinamos la matriz final con la de transformación y modelado actual
+        matrizTransformacionModelado = mFinal * matrizTransformacionModelado;
+
+        // Actualizamos el punto centro del objeto
+        puntoPosModelo = mFinal * glm::vec4(puntoPosModelo, 1.0f);
     }
 
     /**
      * TODO Documentar
      */
     void Modelo::trasladarEnEjeX(bool sentido) {
-        // TODO Implementar
-        std::cout << "trasladarEnEjeX"  << std::endl;
+        if (sentido) {
+            glm::mat4 matrizTraslacion = glm::translate(glm::vec3(distTraslacion,0,0));
+
+            // Aplicamos la traslación tanto a la matriz de modelado como al punto de posición
+            matrizTransformacionModelado = matrizTraslacion * matrizTransformacionModelado;
+            puntoPosModelo = matrizTraslacion * glm::vec4(puntoPosModelo, 1.0f);
+        } else {
+            glm::mat4 matrizTraslacion = glm::translate(glm::vec3(-distTraslacion,0,0));
+
+            // Aplicamos la traslación tanto a la matriz de modelado como al punto de posición
+            matrizTransformacionModelado = matrizTraslacion * matrizTransformacionModelado;
+            puntoPosModelo = matrizTraslacion * glm::vec4(puntoPosModelo, 1.0f);
+        }
     }
 
     /**
      * TODO Documentar
      */
     void Modelo::trasladarEnEjeY(bool sentido) {
-        // TODO Implementar
-        std::cout << "trasladarEnEjeY"  << std::endl;
+        if (sentido) {
+            glm::mat4 matrizTraslacion = glm::translate(glm::vec3(0,distTraslacion,0));
+
+            // Aplicamos la traslación tanto a la matriz de modelado como al punto de posición
+            matrizTransformacionModelado = matrizTraslacion * matrizTransformacionModelado;
+            puntoPosModelo = matrizTraslacion * glm::vec4(puntoPosModelo, 1.0f);
+        } else {
+            glm::mat4 matrizTraslacion = glm::translate(glm::vec3(0,-distTraslacion,0));
+
+            // Aplicamos la traslación tanto a la matriz de modelado como al punto de posición
+            matrizTransformacionModelado = matrizTraslacion * matrizTransformacionModelado;
+            puntoPosModelo = matrizTraslacion * glm::vec4(puntoPosModelo, 1.0f);
+        }
     }
 
     /**
      * TODO Documentar
      */
     void Modelo::trasladarEnEjeZ(bool sentido) {
-        // TODO Implementar
-        std::cout << "trasladarEnEjeZ"  << std::endl;
+        if (sentido) {
+            glm::mat4 matrizTraslacion = glm::translate(glm::vec3(0,0, distTraslacion));
+
+            // Aplicamos la traslación tanto a la matriz de modelado como al punto de posición
+            matrizTransformacionModelado = matrizTraslacion * matrizTransformacionModelado;
+            puntoPosModelo = matrizTraslacion * glm::vec4(puntoPosModelo, 1.0f);
+        } else {
+            glm::mat4 matrizTraslacion = glm::translate(glm::vec3(0,0, -distTraslacion));
+
+            // Aplicamos la traslación tanto a la matriz de modelado como al punto de posición
+            matrizTransformacionModelado = matrizTraslacion * matrizTransformacionModelado;
+            puntoPosModelo = matrizTraslacion * glm::vec4(puntoPosModelo, 1.0f);
+        }
     }
 
     /**
@@ -192,6 +301,9 @@ namespace PAG {
      * TODO Documentar
      */
     void Modelo::refrescarModelo(glm::mat4  matrizCompuesta) {
+        // Combinamos la matriz compuesta global (cámara) con la específica de este modelo
+        glm::mat4 matrizFinal = matrizCompuesta * matrizTransformacionModelado;
+
         // Activamos nuestro shader program
         glUseProgram ( programShader->getIdOpenGL());
 
@@ -201,7 +313,7 @@ namespace PAG {
 
         if ( posicion != -1 )
         {  // El uniform existe y se ha podido localizar correctamente
-            glUniformMatrix4fv ( posicion, 1, GL_FALSE, &matrizCompuesta[0][0] );
+            glUniformMatrix4fv ( posicion, 1, GL_FALSE, &matrizFinal[0][0] );
         }
 
         // Activamos nuestro VAO

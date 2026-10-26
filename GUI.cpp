@@ -146,7 +146,7 @@ namespace PAG {
             ImGui::InputText ( "##", texto, ImGuiInputTextFlags_AutoSelectAll );
 
             // Pintamos el botón
-            static int clicked = 0;
+            int clicked = 0;
             if (ImGui::Button("Cargar"))
                 clicked++;
             if (clicked & 1)
@@ -278,7 +278,7 @@ namespace PAG {
                                                       std::string* rutaModeloSeleccionado
                                                       ) {
         // Indicamos la posición de la ventana que vamos a dibujar
-        ImGui::SetNextWindowPos ( ImVec2 (700, 50), ImGuiCond_Once );
+        ImGui::SetNextWindowPos ( ImVec2 (700, 110), ImGuiCond_Once );
 
 
         if ( ImGui::Begin("Transformación de modelado")){
@@ -331,28 +331,28 @@ namespace PAG {
             // Variables necesarias para el selector de transformacion
             bool changedMTransformacion;
             int indiceTransformacionSeleccionado;
-            // "Traducimos" de enum a entero según el orden en el que los movimientos aparecen en el selector
+            // "Traducimos" de enum a entero según el orden en el que las transformaciones aparecen en el selector
             switch (*transformacionSeleccionada) {
                 case escalar:
-                    indiceTransformacionSeleccionado = 1;
+                    indiceTransformacionSeleccionado = 0;
                     break;
                 case rotarSobreEjeX:
-                    indiceTransformacionSeleccionado = 2;
+                    indiceTransformacionSeleccionado = 1;
                     break;
                 case rotarSobreEjeY:
-                    indiceTransformacionSeleccionado = 3;
+                    indiceTransformacionSeleccionado = 2;
                     break;
                 case rotarSobreEjeZ:
-                    indiceTransformacionSeleccionado = 4;
+                    indiceTransformacionSeleccionado = 3;
                     break;
                 case trasladarEnEjeX:
-                    indiceTransformacionSeleccionado = 5;
+                    indiceTransformacionSeleccionado = 4;
                     break;
                 case trasladarEnEjeY:
-                    indiceTransformacionSeleccionado = 6;
+                    indiceTransformacionSeleccionado = 5;
                     break;
                 case trasladarEnEjeZ:
-                    indiceTransformacionSeleccionado = 7;
+                    indiceTransformacionSeleccionado = 6;
                     break;
                 default:
                     indiceTransformacionSeleccionado = 0;
@@ -367,25 +367,25 @@ namespace PAG {
 
             // Marcamos la transformación en el puntero
             switch (indiceTransformacionSeleccionado) {
-                case 1:
+                case 0:
                     *transformacionSeleccionada = escalar;
                     break;
-                case 2:
+                case 1:
                     *transformacionSeleccionada = rotarSobreEjeX;
                     break;
-                case 3:
+                case 2:
                     *transformacionSeleccionada = rotarSobreEjeY;
                     break;
-                case 4:
+                case 3:
                     *transformacionSeleccionada = rotarSobreEjeZ;
                     break;
-                case 5:
+                case 4:
                     *transformacionSeleccionada = trasladarEnEjeX;
                     break;
-                case 6:
+                case 5:
                     *transformacionSeleccionada = trasladarEnEjeY;
                     break;
-                case 7:
+                case 6:
                     *transformacionSeleccionada = trasladarEnEjeZ;
                     break;
                 default:
@@ -398,12 +398,12 @@ namespace PAG {
             // --- BOTONES PARA APLICAR TRANSFORMACIÓN ---
             // Pintamos los botones
             // Botón para ir en sentido positivo
-            static int clickedPos = 0;
+            int clickedPos = 0;
             if (ImGui::Button("+"))
                 clickedPos++;
             if (clickedPos & 1)
             {
-                // Indicamos que hay que volver a cargar los shaders
+                // Indicamos que ha habido una transformación
                 *hayTransformacion = true;
                 *sentido = true;
 
@@ -414,12 +414,12 @@ namespace PAG {
 
             // Botón para ir en sentido negativo
             ImGui::SameLine(); // Lo colocamos en la misma línea que el anterior botón
-            static int clickedNeg = 0;
+            int clickedNeg = 0;
             if (ImGui::Button("-"))
                 clickedNeg++;
             if (clickedNeg & 1)
             {
-                // Indicamos que hay que volver a cargar los shaders
+                // Indicamos que ha habido una transformación
                 *hayTransformacion = true;
                 *sentido = false;
 

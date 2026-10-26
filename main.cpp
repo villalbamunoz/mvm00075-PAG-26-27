@@ -16,7 +16,7 @@
 #include "Camara.h"
 
 // --- VARIABLES GLOBALES ---
-PAG::MovimientoCamara movimiento_camara = PAG::Pan; // Este será el movimiento predeterminado
+PAG::MovimientoCamara movimiento_camara = PAG::sinMovCamara; // Este será el movimiento predeterminado
 PAG::TransformacionModelado transformacion_modelado = PAG::escalar; // Transformación predeterminada
 bool sentido_transformacion_modelado = true; // Sentido de transformación de modelado predeterminado
 std::string ruta_obj_seleccionado = "../modelos/Panther.obj"; // Colocamos uno de los objetos añadidos de forma predeterminada
