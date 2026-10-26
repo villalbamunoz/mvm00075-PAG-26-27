@@ -263,4 +263,20 @@ namespace PAG {
         }
 
     }
+
+    /**
+     * TODO Documentar
+     * @param ruta
+     */
+    void Renderer::borrarModelo(std::string ruta) {
+        // Buscamos el elemento a eliminar
+        std::vector<Modelo>::iterator it;
+        for (it = modelosEnEscena.begin(); it != modelosEnEscena.end(); ++it) {
+            if (it->getRuta() == ruta) {
+                break;
+            }
+        }
+        // Borramos el elemento en la posición indiceBuscado
+        modelosEnEscena.erase(it);
+    }
 }

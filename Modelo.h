@@ -36,7 +36,7 @@ namespace PAG {
         // Parámetros para indicar la cantidad de las transformaciones de modelado
         glm::float32 cantidadEscalarPos = 1.5f;
         glm::float32 cantidadEscalarNeg = 0.75f;
-        glm::float32 gradosRotacion = 1.0f;
+        glm::float32 gradosRotacion = 5.0f;
         glm::float32 distTraslacion = 0.01f;
 
 

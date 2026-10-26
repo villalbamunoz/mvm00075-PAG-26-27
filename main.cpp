@@ -446,9 +446,11 @@ int main() {
 
         // --- VENTANA DE SELECCIÓN DE TRANSFORMACIÓN DE MODELADO
         bool hayTransformacion = false;
-        PAG::GUI::getInstancia().dibujar_ventana_transformacion_modelado(
+        bool hayBorrado = false;
+        PAG::GUI::getInstancia().dibujar_ventana_transformacion_y_borrado(
             PAG::Renderer::getInstancia().getRutasModelos(),
             &hayTransformacion,
+            &hayBorrado,
             &transformacion_modelado,
             &sentido_transformacion_modelado,
             &ruta_obj_seleccionado
@@ -456,9 +458,17 @@ int main() {
         if (hayTransformacion) {
             PAG::Renderer::getInstancia().aplicarTransformacion(ruta_obj_seleccionado,
                 transformacion_modelado, sentido_transformacion_modelado);
+            hayTransformacion = false; // Volvemos a colocar a false, para no aplicar la misma transformación en bucle
+        }
+        if (hayBorrado) {
+            PAG::Renderer::getInstancia().borrarModelo(ruta_obj_seleccionado);
+
+            // Recuperamos los valores iniciales
+            hayBorrado = false;
+            ruta_obj_seleccionado = "";
         }
 
-        hayTransformacion = false; // Volvemos a colocar a false, para no aplicar la misma transformación en bucle
+
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -474,9 +484,6 @@ int main() {
             // Devolvemos las variables a sus valores iniciales tras la carga
             rutaNuevoModelo = "";
         }
-
-
-
 
         // -------------------------------------------------------------------------------------------------------------
 

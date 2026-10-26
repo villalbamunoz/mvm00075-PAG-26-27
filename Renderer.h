@@ -64,6 +64,7 @@ namespace PAG {
         void anadirModelo(std::string ruta);
         void anadirModelosPredeterminados();
         void aplicarTransformacion(std::string rutaModelo, TransformacionModelado transformacion, bool sentido);
+        void borrarModelo(std::string ruta);
 
     };
 } // PAG
