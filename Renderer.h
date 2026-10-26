@@ -24,20 +24,21 @@ namespace PAG {
         // Gestión de modelo
         std::vector<Modelo> modelosEnEscena;
 
-
         // Identificadores de objetos de OpenGL
         GLuint idVAO = 0; // Identificador del vertex array object
         GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
         GLuint idVBOcolores = 0; // Identificador del vertex buffer object de colores
         GLuint idIBO = 0; // Identificador del index buffer object
 
-
-
+        // Parámetros para indicar la cantidad de las transformaciones de modelado
+        glm::float32 cantidadEscalarPos = 1.5f;
+        glm::float32 cantidadEscalarNeg = 0.75f;
+        glm::float32 gradosRotacion = 1.0f;
+        glm::float32 distTraslacion = 0.01f;
 
     public:
         static Renderer& getInstancia();
         virtual ~Renderer();
-
 
         void refrescar_escena(glm::vec3 puntoPosCamara, glm::vec3 puntoLA, glm::vec3 upVector, glm::float32 fovYGrados,
             glm::float32 aspectRatio, glm::float32 distZNear, glm::float32 distZFar);
@@ -51,7 +52,7 @@ namespace PAG {
         void set_nombre_shaders(std::string texto, int posModelo) {}; // TODO Implementar en cpp y documentar
         std::vector<std::string> getRutasModelos();
 
-        // TODO Quitar placeholder
+        // TODO Quitar placeholder. Deben poderse hacer shaders diferentes para cada modelo.
         std::string placeholder = "pag05";
         std::string* get_direccion_nombre_shaders() {return &placeholder;}
 

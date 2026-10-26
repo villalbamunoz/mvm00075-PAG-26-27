@@ -167,12 +167,17 @@ namespace PAG {
      * TODO Documentar
      */
     void Renderer::anadirModelosPredeterminados() {
-        // TODO Incluir varios y esparcirlos de forma aleatoria por la escena
+        // Incluimos varios modelos y los esparcimos por la escena
         Modelo modeloParaInsertar1("../modelos/Panther.obj");
         modelosEnEscena.push_back(modeloParaInsertar1);
 
-        Modelo modeloParaInsertar2("../modelos/dado.obj");
+        Modelo modeloParaInsertar2("../modelos/Ajax.obj");
         modelosEnEscena.push_back(modeloParaInsertar2);
+
+        modelosEnEscena[0].trasladarEnEjeZ(true, 1);
+        modelosEnEscena[0].rotarSobreEjeY(true, 80);
+        modelosEnEscena[1].trasladarEnEjeX(true, 1);
+
     }
 
 
@@ -193,12 +198,17 @@ namespace PAG {
      * Añade un modelo a la escena a partir de la ruta a su fichero .obj.
      */
     void Renderer::anadirModelo(std::string ruta) {
-        // TODO Comprobar si hay que cambiar el tratamiento de la ruta, según nos lo de la librería para cargar ficheros
+        // Insertamos el modelo
         Modelo modeloParaInsertar(ruta);
         modelosEnEscena.push_back(modeloParaInsertar);
         modelosEnEscena.back().creaShaderProgram();
         modelosEnEscena.back().cargarModelo();
-        std::cout << "modelosEnEscena.size(): "<<  modelosEnEscena.size();
+
+        // Trasladamos el modelo en la escena de forma aleatoria
+        modelosEnEscena.back().trasladarEnEjeX((rand()%2) == 0, rand()%2);
+        modelosEnEscena.back().trasladarEnEjeY((rand()%2) == 0, rand()%2);
+        modelosEnEscena.back().trasladarEnEjeZ((rand()%2) == 0, rand()%2);
+
     }
 
     /**
@@ -229,31 +239,36 @@ namespace PAG {
         // Llamamos a la transformación pedida sobre el modelo pedido
         switch (transformacion) {
             case escalar: {
-                modelosEnEscena[indiceAfectado].escalar(sentido);
+                if (sentido) {
+                    modelosEnEscena[indiceAfectado].escalar(sentido, cantidadEscalarPos);
+                } else {
+                    modelosEnEscena[indiceAfectado].escalar(sentido, cantidadEscalarNeg);
+
+                }
                 break;
             }
-            case   rotarSobreEjeX: {
-                modelosEnEscena[indiceAfectado].rotarSobreEjeX(sentido);
+            case rotarSobreEjeX: {
+                modelosEnEscena[indiceAfectado].rotarSobreEjeX(sentido, gradosRotacion);
                 break;
             }
             case rotarSobreEjeY: {
-                modelosEnEscena[indiceAfectado].rotarSobreEjeY(sentido);
+                modelosEnEscena[indiceAfectado].rotarSobreEjeY(sentido, gradosRotacion);
                 break;
             }
             case rotarSobreEjeZ: {
-                modelosEnEscena[indiceAfectado].rotarSobreEjeZ(sentido);
+                modelosEnEscena[indiceAfectado].rotarSobreEjeZ(sentido, gradosRotacion);
                 break;
             }
             case trasladarEnEjeX: {
-                modelosEnEscena[indiceAfectado].trasladarEnEjeX(sentido);
+                modelosEnEscena[indiceAfectado].trasladarEnEjeX(sentido, distTraslacion);
                 break;
             }
             case trasladarEnEjeY: {
-                modelosEnEscena[indiceAfectado].trasladarEnEjeY(sentido);
+                modelosEnEscena[indiceAfectado].trasladarEnEjeY(sentido, distTraslacion);
                 break;
             }
             case trasladarEnEjeZ: {
-                modelosEnEscena[indiceAfectado].trasladarEnEjeZ(sentido);
+                modelosEnEscena[indiceAfectado].trasladarEnEjeZ(sentido, distTraslacion);
                 break;
             }
             default: {

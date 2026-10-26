@@ -33,11 +33,6 @@ namespace PAG {
         GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
         GLuint idIBO = 0; // Identificador del index buffer object
 
-        // Parámetros para indicar la cantidad de las transformaciones de modelado
-        glm::float32 cantidadEscalarPos = 1.5f;
-        glm::float32 cantidadEscalarNeg = 0.75f;
-        glm::float32 gradosRotacion = 5.0f;
-        glm::float32 distTraslacion = 0.01f;
 
 
     public:
@@ -45,13 +40,13 @@ namespace PAG {
         Modelo(std::string nuevaRuta) : rutaOBJ(nuevaRuta) {}
 
         // Méto_dos para añadir transformaciones de modelado
-        void escalar(bool agrandar);
-        void rotarSobreEjeX(bool sentido);
-        void rotarSobreEjeY(bool sentido);
-        void rotarSobreEjeZ(bool sentido);
-        void trasladarEnEjeX(bool sentido);
-        void trasladarEnEjeY(bool sentido);
-        void trasladarEnEjeZ(bool sentido);
+        void escalar(bool agrandar, glm::float32 proporcion);
+        void rotarSobreEjeX(bool sentido, glm::float32 grados);
+        void rotarSobreEjeY(bool sentido, glm::float32 grados);
+        void rotarSobreEjeZ(bool sentido, glm::float32 grados);
+        void trasladarEnEjeX(bool sentido, glm::float32 distancia);
+        void trasladarEnEjeY(bool sentido, glm::float32 distancia);
+        void trasladarEnEjeZ(bool sentido, glm::float32 distancia);
 
         // Modelado básico
         void creaShaderProgram();

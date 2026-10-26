@@ -20,7 +20,7 @@ namespace PAG {
         Camara() {};
 
         // Definición de la cámara
-        glm::vec3 puntoPosCamara = {1.0f,1.0f,1.0f}; // Posicion de la camara
+        glm::vec3 puntoPosCamara = {2.0f,2.0f,2.0f}; // Posicion de la camara
         glm::vec3 puntoLA = {.0f,.0f,.0f}; // Punto donde mira la cámara (LookAt)
         glm::float32 fovYGrados = 45; // Ángulo de visión en vertical
         glm::float32 aspectRatio = 1; // Relación de aspecto

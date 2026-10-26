@@ -488,7 +488,6 @@ namespace PAG {
 
         if(dialogoSeleccionArchivos.HasSelected())
         {
-            std::cout << "Archivo seleccionado: " << dialogoSeleccionArchivos.GetSelected().string() << std::endl;
             // Añadimos el modelo a la escena
 
             *ruta = dialogoSeleccionArchivos.GetSelected().string();
