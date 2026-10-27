@@ -241,7 +241,7 @@ namespace PAG {
         ImGui::SetNextWindowPos ( ImVec2 (700, 110), ImGuiCond_Once );
 
 
-        if ( ImGui::Begin("Transformación de modelado")){
+        if ( ImGui::Begin("Transformación y borrado")){
             // La ventana está desplegada
             ImGui::SetWindowSize(ImVec2 (300, 100));
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
