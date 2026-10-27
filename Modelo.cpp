@@ -5,6 +5,20 @@
 #include <glm/gtx/transform.hpp>
 
 namespace PAG {
+    Modelo::~Modelo() {}
+
+    void Modelo::liberarRecursos() {
+        if ( idVBOcoordenadas != 0 )
+        { glDeleteBuffers ( 1, &idVBOcoordenadas );
+        }
+        if ( idIBO != 0 )
+        { glDeleteBuffers ( 1, &idIBO );
+        }
+        if ( idVAO != 0 )
+        { glDeleteVertexArrays ( 1, &idVAO );
+        }
+    }
+
     /**
      * TODO Documentar
      * @param agrandar
@@ -324,7 +338,7 @@ namespace PAG {
         glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, idIBO );
 
         // Comenzamos el proceso de rendering
-        glDrawElements ( GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, nullptr );
+        glDrawElements ( GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr );
 
     }
 } // PAG

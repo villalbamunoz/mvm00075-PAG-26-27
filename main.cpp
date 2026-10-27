@@ -20,6 +20,7 @@ PAG::MovimientoCamara movimiento_camara = PAG::sinMovCamara; // Este será el mo
 PAG::TransformacionModelado transformacion_modelado = PAG::escalar; // Transformación predeterminada
 bool sentido_transformacion_modelado = true; // Sentido de transformación de modelado predeterminado
 std::string ruta_obj_seleccionado = "../modelos/Panther.obj"; // Colocamos uno de los objetos añadidos de forma predeterminada
+std::string shaders_seleccionados = "pag05"; // Shaders que se usarán al cargar modelo
 bool boton_izq_raton_pulsado = false;
 double pos_x_raton_ultima_pulsacion_tecla_izq = 0;
 double pos_y_raton_ultima_pulsacion_tecla_izq = 0;
@@ -399,26 +400,12 @@ int main() {
 
 
         PAG::GUI::getInstancia().crear_frame();
-        PAG::GUI::getInstancia().dibujar_ventana_mensajes();
+
 
         // -------------------------------------------------------------------------------------------------------------
 
-        // --- VENTANA DE SELECCIÓN DE SHADERS ---
-        bool hay_que_recargar_shaders = false;
-        PAG::GUI::getInstancia().dibujar_ventana_entrada_nombre_shaders(
-            PAG::Renderer::getInstancia().get_direccion_nombre_shaders(),
-            &hay_que_recargar_shaders);
-
-        if (hay_que_recargar_shaders) {
-            try {
-                PAG::Renderer::getInstancia().creaShadersPrograms();
-
-            } catch (std::exception &e) {
-                std::cout << e.what() << std::endl;
-                PAG::GUI::getInstancia().anadir_mensaje(e.what());
-            }
-            hay_que_recargar_shaders = false; // Ya hemos recargado el shader, no hace falta seguir haciéndolo
-        }
+        // --- VENTANA DE MENSAJES ---
+        PAG::GUI::getInstancia().dibujar_ventana_mensajes();
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -464,18 +451,15 @@ int main() {
             ruta_obj_seleccionado = "";
         }
 
-
-
         // -------------------------------------------------------------------------------------------------------------
 
 
         // --- VENTANA DE CARGA DE NUEVOS MODELOS ---
         std::string rutaNuevoModelo;
-        PAG::GUI::getInstancia().dibujar_ventana_carga_modelos(&rutaNuevoModelo);
-
+        PAG::GUI::getInstancia().dibujar_ventana_carga_modelos(&rutaNuevoModelo, &shaders_seleccionados);
         if (!rutaNuevoModelo.empty()) {
             // Cargamos el modelo pedido
-            PAG::Renderer::getInstancia().anadirModelo(rutaNuevoModelo);
+            PAG::Renderer::getInstancia().anadirModelo(rutaNuevoModelo, shaders_seleccionados);
 
             // Devolvemos las variables a sus valores iniciales tras la carga
             rutaNuevoModelo = "";

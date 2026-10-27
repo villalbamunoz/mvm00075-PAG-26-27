@@ -15,8 +15,8 @@
 namespace PAG {
 
     class Modelo {
-    private:
-        std::string rutaOBJ = ""; // Aquí incluimos el modelo predeterminado
+    public: // TODO Hacer private
+        std::string rutaOBJ;
         ProgramShader* programShader = nullptr;
         std::string nombreShaders = "pag05"; // Aquí incluimos los shaders predeterminados
         glm::mat4 matrizTransformacionModelado = glm::mat4(1); // Este constructor crea la identity matrix
@@ -36,8 +36,11 @@ namespace PAG {
 
 
     public:
+        // Constructores y destructores
+        Modelo(std::string nuevaRuta, std::string nuevoNombre="") : rutaOBJ(nuevaRuta), nombreShaders(nuevoNombre) {}
+        ~Modelo();
 
-        Modelo(std::string nuevaRuta) : rutaOBJ(nuevaRuta) {}
+        void liberarRecursos();
 
         // Méto_dos para añadir transformaciones de modelado
         void escalar(bool agrandar, glm::float32 proporcion);

@@ -24,7 +24,7 @@ namespace PAG {
         // Gestión de modelo
         std::vector<Modelo> modelosEnEscena;
 
-        // Identificadores de objetos de OpenGL
+        // Identificadores de objetos de OpenGL TODO Borrar si no hacen falta
         GLuint idVAO = 0; // Identificador del vertex array object
         GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
         GLuint idVBOcolores = 0; // Identificador del vertex buffer object de colores
@@ -35,6 +35,9 @@ namespace PAG {
         glm::float32 cantidadEscalarNeg = 0.75f;
         glm::float32 gradosRotacion = 1.0f;
         glm::float32 distTraslacion = 0.01f;
+
+        // Shaders que se usarán al añadir los modelos predeterminados
+        std::string shaderPredeterminados = "pag05";
 
     public:
         static Renderer& getInstancia();
@@ -49,12 +52,7 @@ namespace PAG {
         void set_color_borrado_frame_buffer(float r, float g, float b, float a);
         float* get_color_borrado_frame_buffer();
         std::string get_propiedades_del_contexto();
-        void set_nombre_shaders(std::string texto, int posModelo) {}; // TODO Implementar en cpp y documentar
         std::vector<std::string> getRutasModelos();
-
-        // TODO Quitar placeholder. Deben poderse hacer shaders diferentes para cada modelo.
-        std::string placeholder = "pag05";
-        std::string* get_direccion_nombre_shaders() {return &placeholder;}
 
         // Generales
         void creaShadersPrograms();
@@ -62,7 +60,7 @@ namespace PAG {
         void inicializaOpenGL();
 
         // Gestión de modelos en escena
-        void anadirModelo(std::string ruta);
+        void anadirModelo(std::string rutaModelo, std::string nombreShaders);
         void anadirModelosPredeterminados();
         void aplicarTransformacion(std::string rutaModelo, TransformacionModelado transformacion, bool sentido);
         void borrarModelo(std::string ruta);

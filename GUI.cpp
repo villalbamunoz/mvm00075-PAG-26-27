@@ -128,48 +128,6 @@ namespace PAG {
 
 
     /**
-     * Dibuja una ventana en la que introducir el prefijo de los shaders a usar
-     * @param texto Puntero a string que contendrá el texto introducido en la ventana por el usuario
-     * @param cambio Puntero a bool que la función marcará a True si se ha intentado cargar nuevo nombre de shaders
-     */
-    void GUI::dibujar_ventana_entrada_nombre_shaders(std::string* texto, bool *cambio) {
-        // Indicamos la posición de la ventana que vamos a dibujar
-        ImGui::SetNextWindowPos ( ImVec2 (10, 325), ImGuiCond_Once );
-
-
-        if ( ImGui::Begin("Program Shader")){
-            ImGui::SetWindowSize(ImVec2 (300, 100));
-
-            // La ventana está desplegada
-            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
-
-            // Pintamos la caja de texto
-            ImGui::InputText ( "##", texto, ImGuiInputTextFlags_AutoSelectAll );
-
-            // Pintamos el botón
-            int clicked = 0;
-            if (ImGui::Button("Cargar"))
-                clicked++;
-            if (clicked & 1)
-            {
-                // Indicamos que hay que volver a cargar los shaders
-                *cambio = true;
-
-                // Feedback visual por pantalla
-                ImGui::SameLine();
-                ImGui::Text("Shader cargado");
-            }
-
-
-        }
-        // Si la ventana no está desplegada, Begin devuelve false
-        ImGui::End ();
-
-        // Si no se ha desplegado la ventana, no ha habido cambios en el color seleccionado,
-        // devolvemos una señal de ello.
-    }
-
-    /**
      * Dibuja la ventana para seleccionar el movimiento actual de la cámara.
      * @param movimiento_seleccionado: Opción del enumerado MovimientoCamara que indica cuál es el movimiento
      * elegido actualmente, para pintar sus instrucciones en la ventana.
@@ -452,7 +410,7 @@ namespace PAG {
     /**
      * TODO Documentar
      */
-    void GUI::dibujar_ventana_carga_modelos(std::string* ruta) {
+    void GUI::dibujar_ventana_carga_modelos(std::string* rutaModelo, std::string* nombreShaders) {
         // Indicamos la posición de la ventana que vamos a dibujar
         ImGui::SetNextWindowPos ( ImVec2 (700, 230), ImGuiCond_Once );
 
@@ -463,9 +421,14 @@ namespace PAG {
             // La ventana está desplegada
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
 
-            // Pintamos el botón
+            // Pintamos la caja de texto para el nombre de los shaders
+            ImGui::Text("Shaders: ");
+            ImGui::SameLine();
+            ImGui::InputText ( "##", nombreShaders, ImGuiInputTextFlags_AutoSelectAll );
+
+            // Pintamos el botón de selección de modelo
             int clickedPos = 0;
-            if (ImGui::Button("Cargar modelo"))
+            if (ImGui::Button("Elegir modelo"))
                 clickedPos++;
             if (clickedPos & 1)
             {
@@ -475,6 +438,7 @@ namespace PAG {
                 // ImGui::SameLine();
                 // ImGui::Text("Modelo cargado");
             }
+
 
         }
         // Si la ventana no está desplegada, Begin devuelve false
@@ -490,7 +454,7 @@ namespace PAG {
         {
             // Añadimos el modelo a la escena
 
-            *ruta = dialogoSeleccionArchivos.GetSelected().string();
+            *rutaModelo = dialogoSeleccionArchivos.GetSelected().string();
 
             // Limpiamos la selección
             dialogoSeleccionArchivos.ClearSelected();

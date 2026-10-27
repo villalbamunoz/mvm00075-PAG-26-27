@@ -24,21 +24,9 @@ namespace PAG {
     * Destructor
     */
     Renderer::~Renderer() {
-        if ( idVBOcoordenadas != 0 )
-        { glDeleteBuffers ( 1, &idVBOcoordenadas );
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            modelosEnEscena[i].liberarRecursos();
         }
-        if ( idVBOcolores != 0 )
-        { glDeleteBuffers ( 1, &idVBOcolores );
-        }
-        if ( idIBO != 0 )
-        { glDeleteBuffers ( 1, &idIBO );
-        }
-        if ( idVAO != 0 )
-        { glDeleteVertexArrays ( 1, &idVAO );
-        }
-
-
-        // TODO Borrar correctamente la ED de modelos en escena (si es que es necesario hacer algo en especial)
     }
 
     /**
@@ -78,8 +66,6 @@ namespace PAG {
         for (int i = 0; i < modelosEnEscena.size(); ++i) {
             modelosEnEscena[i].refrescarModelo(matrizCompuesta);
         }
-
-
     }
 
     /**
@@ -163,9 +149,8 @@ namespace PAG {
      * TODO Documentar
      */
     void Renderer::anadirModelosPredeterminados() {
-        anadirModelo("../modelos/Panther.obj");
-        anadirModelo("../modelos/Ajax.obj");
-
+        anadirModelo("../modelos/Panther.obj", shaderPredeterminados);
+        anadirModelo("../modelos/dado.obj", shaderPredeterminados);
     }
 
 
@@ -185,10 +170,9 @@ namespace PAG {
     /**
      * Añade un modelo a la escena a partir de la ruta a su fichero .obj.
      */
-    void Renderer::anadirModelo(std::string ruta) {
+    void Renderer::anadirModelo(std::string rutaModelo, std::string nombreShaders) {
         // Insertamos el modelo
-        Modelo modeloParaInsertar(ruta);
-        modelosEnEscena.push_back(modeloParaInsertar);
+        modelosEnEscena.push_back(Modelo(rutaModelo, nombreShaders));
         modelosEnEscena.back().creaShaderProgram();
         modelosEnEscena.back().cargarModelo();
 
@@ -196,6 +180,15 @@ namespace PAG {
         modelosEnEscena.back().trasladarEnEjeX((rand()%2) == 0, rand()%2);
         modelosEnEscena.back().trasladarEnEjeY((rand()%2) == 0, rand()%2);
         modelosEnEscena.back().trasladarEnEjeZ((rand()%2) == 0, rand()%2);
+
+        for (int i = 0; i < modelosEnEscena.size(); ++i) {
+            //std::cout << i << ": vertices: " << modelosEnEscena[i].vertices.size() << std::endl;
+            //std::cout << i << ": indices " << modelosEnEscena[i].indices.size() << std::endl;
+            //std::cout << i << ": idVAO " << modelosEnEscena[i].idVAO << std::endl;
+            //std::cout << i << ": idIBO " << modelosEnEscena[i].idIBO << std::endl;
+
+        }
+
 
     }
 

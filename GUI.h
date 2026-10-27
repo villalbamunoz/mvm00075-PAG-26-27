@@ -33,11 +33,10 @@ namespace PAG {
         // Dibujado de ventanas TODO todas las de la practica 6
         void dibujar_ventana_mensajes();
         void dibujar_ventana_seleccion_color(float* color);
-        void dibujar_ventana_entrada_nombre_shaders(std::string* texto, bool *cambio);
         void dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado);
         void dibujar_ventana_transformacion_y_borrado(std::vector<std::string> rutasModelos, bool* hayTransformacion,
             bool* hayBorrado, TransformacionModelado* transformacionSeleccionada, bool* sentido, std::string* rutaModeloSeleccionado);
-        void dibujar_ventana_carga_modelos(std::string* ruta);
+        void dibujar_ventana_carga_modelos(std::string* rutaModelo, std::string* nombreShaders);
 
         void anadir_mensaje(std::string mensaje);
 
