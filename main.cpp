@@ -58,7 +58,6 @@ void window_refresh_callback ( GLFWwindow *window )
 // del área de dibujo OpenGL.
 void framebuffer_size_callback ( GLFWwindow *window, int width, int height ) {
     PAG::Renderer::getInstancia().callback_resize(width, height);
-    PAG::GUI::getInstancia().anadir_mensaje("Callback de resize llamado \n");
 }
 
 // - Esta función callback será llamada cada vez que se pulse una tecla
@@ -67,8 +66,6 @@ void key_callback ( GLFWwindow *window, int key, int scancode, int action, int m
     if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS ) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
-
-    PAG::GUI::getInstancia().anadir_mensaje("Callback de tecla llamado \n");
 
     // Recibimos los controles de teclado según el movimiento de cámara
     switch (movimiento_camara) {
@@ -148,11 +145,6 @@ void key_callback ( GLFWwindow *window, int key, int scancode, int action, int m
 // - Esta función callback será llamada cada vez que se pulse algún botón del ratón sobre el área de dibujo OpenGL.
 void mouse_button_callback ( GLFWwindow *window, int button, int action, int mods ) {
     if ( action == GLFW_PRESS ){
-
-        PAG::GUI::getInstancia().anadir_mensaje("Pulsado el botón: ");
-        PAG::GUI::getInstancia().anadir_mensaje((std::to_string(button)));
-        PAG::GUI::getInstancia().anadir_mensaje("\n");
-
         // Comunicamos el evento a la interfaz
         PAG::GUI::getInstancia().evento_boton_raton(button, true);
 
@@ -162,9 +154,6 @@ void mouse_button_callback ( GLFWwindow *window, int button, int action, int mod
     }
     else if ( action == GLFW_RELEASE )
     {
-        PAG::GUI::getInstancia().anadir_mensaje("Soltado el botón: ");
-        PAG::GUI::getInstancia().anadir_mensaje(std::to_string(button));
-        PAG::GUI::getInstancia().anadir_mensaje("\n");
 
         // Comunicamos el evento a la interfaz
         PAG::GUI::getInstancia().evento_boton_raton(button, false);
@@ -261,13 +250,6 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
 {
 
-    PAG::GUI::getInstancia().anadir_mensaje("Movida la rueda del ratón");
-    PAG::GUI::getInstancia().anadir_mensaje(std::to_string(xoffset));
-    PAG::GUI::getInstancia().anadir_mensaje(" Unidades en horizontal y ");
-    PAG::GUI::getInstancia().anadir_mensaje(std::to_string(yoffset));
-    PAG::GUI::getInstancia().anadir_mensaje(" unidades en vertical");
-    PAG::GUI::getInstancia().anadir_mensaje("\n");
-
     /*
  *
  * Elegimos 3 valores aleatorios entre 0 y 1 para los 3 parámetros que definen el color de fondo. Para ello:
@@ -289,11 +271,9 @@ void scroll_callback( GLFWwindow *window, double xoffset, double yoffset )
 }
 
 
-
-
-
-
 int main() {
+
+
     PAG::GUI::getInstancia().anadir_mensaje("Starting Application PAG - Prueba 01 \n");
 
     // Semilla para la generación de números aleatorios
@@ -381,6 +361,8 @@ int main() {
     // botón de cerrar la ventana (la X).
     while ( !glfwWindowShouldClose ( window ) )
     {
+        try {
+
         // - Obtiene y organiza los eventos pendientes, tales como pulsaciones de
         // teclas o de ratón, etc. Siempre al final de cada iteración del ciclo
         // de eventos y después de glfwSwapBuffers(window);
@@ -466,10 +448,14 @@ int main() {
 
         // -------------------------------------------------------------------------------------------------------------
 
+        } catch (std::exception &e) {
+            PAG::GUI::getInstancia().anadir_mensaje(e.what());
+        }
 
         // Último paso de renderización del frame
         PAG::GUI::getInstancia().renderizar_frame();
         glfwSwapBuffers(window);
+
     }
 
     // - Una vez terminado el ciclo de eventos, liberar recursos, etc.
