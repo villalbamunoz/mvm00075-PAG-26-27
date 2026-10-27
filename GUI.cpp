@@ -226,11 +226,17 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Dibuja la ventana GUI de selección de transformaciones de modelado y de borrado de modelos.
+     * @param rutasModelos Vector de string con las rutas a los modelos. Las usamos como identificadores
+     * @param hayTransformacion Puntero a bool que colocaremos a true si se ha seleccionado aplicar una transformación
+     * @param hayBorrado Puntero a bool que colocaremos a true si se ha seleccionado borrar un modelo
+     * @param transformacionSeleccionada Opción del enumerado de transformaciones de modelado correspondiente a la transformación seleccionada
+     * @param sentido Sentido (positivo-agrandar / negativo-achicar) de la transformación
+     * @param rutaModeloSeleccionado string con ruta al modelo al que aplicamos la acción (trasnformación o borrado)
      */
     void GUI::dibujar_ventana_transformacion_y_borrado(std::vector<std::string> rutasModelos, bool* hayTransformacion,
-        bool* hayBorrado, TransformacionModelado* transformacionSeleccionada, bool* sentido,
-        std::string* rutaModeloSeleccionado) {
+                                                       bool* hayBorrado, TransformacionModelado* transformacionSeleccionada, bool* sentido,
+                                                       std::string* rutaModeloSeleccionado) {
         // Indicamos la posición de la ventana que vamos a dibujar
         ImGui::SetNextWindowPos ( ImVec2 (700, 110), ImGuiCond_Once );
 
@@ -408,7 +414,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Dibuja la ventana GUI para cargar modelos con un shader concreto.
+     * @param rutaModelo Puntero a string que contiene la ruta donde se encuentra el modelo seleccionado
+     * @param nombreShaders Puntero a string que contiene el nombre de los shaders introducido
      */
     void GUI::dibujar_ventana_carga_modelos(std::string* rutaModelo, std::string* nombreShaders) {
         // Indicamos la posición de la ventana que vamos a dibujar

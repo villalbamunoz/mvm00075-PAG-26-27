@@ -129,24 +129,8 @@ namespace PAG {
 
 
     /**
-    * TODO borrar
-    */
-    void Renderer::creaShadersPrograms() {
-        // Recorremos los modelos y que cada uno cree su shader program
-
-    }
-
-
-    /**
-    * Méto_do para crear el VAO predeterminado de los modelos
-    * @note No se incluye ninguna comprobación de errores
-    */
-    void Renderer::cargarModelosPredeterminados() {
-
-    }
-
-    /**
-     * TODO Documentar
+     * Añade modelos predeterminados a la escena usando el mismo méto_do al que acceder la GUI. Permite hacer pruebas
+     * más rápido al tener ya modelos en pantalla como punto de partida.
      */
     void Renderer::anadirModelosPredeterminados() {
         anadirModelo("../modelos/Panther.obj", shaderPredeterminados);
@@ -180,15 +164,6 @@ namespace PAG {
         modelosEnEscena.back().trasladarEnEjeX((rand()%2) == 0, rand()%2);
         modelosEnEscena.back().trasladarEnEjeY((rand()%2) == 0, rand()%2);
         modelosEnEscena.back().trasladarEnEjeZ((rand()%2) == 0, rand()%2);
-
-        for (int i = 0; i < modelosEnEscena.size(); ++i) {
-            //std::cout << i << ": vertices: " << modelosEnEscena[i].vertices.size() << std::endl;
-            //std::cout << i << ": indices " << modelosEnEscena[i].indices.size() << std::endl;
-            //std::cout << i << ": idVAO " << modelosEnEscena[i].idVAO << std::endl;
-            //std::cout << i << ": idIBO " << modelosEnEscena[i].idIBO << std::endl;
-
-        }
-
 
     }
 
@@ -261,8 +236,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
-     * @param ruta
+     * Elimina de la estructura de datos de modelos al modelo con ruta especificada. Si hay varios modelos con esa
+     * misma ruta, se borra al que se encuentre antes en el vector
+     * @param ruta String con la ruta del modelo a borrar
      */
     void Renderer::borrarModelo(std::string ruta) {
         // Buscamos el elemento a eliminar

@@ -30,7 +30,7 @@ namespace PAG {
         void crear_frame();
         void renderizar_frame();
 
-        // Dibujado de ventanas TODO todas las de la practica 6
+        // Dibujado de ventanas
         void dibujar_ventana_mensajes();
         void dibujar_ventana_seleccion_color(float* color);
         void dibujar_ventana_movimientos_camara(MovimientoCamara* movimiento_seleccionado);

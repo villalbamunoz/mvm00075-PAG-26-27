@@ -24,12 +24,6 @@ namespace PAG {
         // Gestión de modelo
         std::vector<Modelo> modelosEnEscena;
 
-        // Identificadores de objetos de OpenGL TODO Borrar si no hacen falta
-        GLuint idVAO = 0; // Identificador del vertex array object
-        GLuint idVBOcoordenadas = 0; // Identificador del vertex buffer object de coordenadas
-        GLuint idVBOcolores = 0; // Identificador del vertex buffer object de colores
-        GLuint idIBO = 0; // Identificador del index buffer object
-
         // Parámetros para indicar la cantidad de las transformaciones de modelado
         glm::float32 cantidadEscalarPos = 1.5f;
         glm::float32 cantidadEscalarNeg = 0.75f;

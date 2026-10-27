@@ -1,7 +1,6 @@
 // TODO Explicar la sesión 6 en el README.md
 // TODO Añadir UML
 // TODO Arreglar que las ventanas no sean redimensionables
-// TODO Quitar todos los std::cout y std::cerr de todos los archivos
 #include <iostream>
 #include "Renderer.h"
 #include "GUI.h"

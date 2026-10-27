@@ -20,9 +20,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
-     * @param agrandar
-     * @param proporcion
+     * Añade una transformación de escalado a la matriz de transformación y modelado del modelo
+     * @param agrandar Booleano que indica si aumentaremos o reduciremos el tamaño del modelo
+     * @param proporcion Flotante que indica cuanta transformación aplicaremos
      */
     void Modelo::escalar(bool agrandar,  glm::float32 proporcion) {
         if (agrandar) {
@@ -35,7 +35,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Añade una transformación de rotación sobre el eje X del modelo a la matriz de transformación y modelado del modelo
+     * @param sentido Booleano que indica si rotamos en positivo o negativo sobre el eje
+     * @param grados Flotante que indica cuantos grados rotaremos
      */
     void Modelo::rotarSobreEjeX(bool sentido, glm::float32 grados) {
          /*Si queremos rotar un modelo tomando como centro de rotación un punto p arbitrario en el espacio,
@@ -69,7 +71,9 @@ namespace PAG {
 
 
     /**
-     * TODO Documentar
+     * Añade una transformación de rotación sobre el eje Y del modelo a la matriz de transformación y modelado del modelo
+     * @param sentido Booleano que indica si rotamos en positivo o negativo sobre el eje
+     * @param grados Flotante que indica cuantos grados rotaremos
      */
     void Modelo::rotarSobreEjeY(bool sentido, glm::float32 grados) {
         /*Si queremos rotar un modelo tomando como centro de rotación un punto p arbitrario en el espacio,
@@ -101,7 +105,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Añade una transformación de rotación sobre el eje Z del modelo a la matriz de transformación y modelado del modelo
+     * @param sentido Booleano que indica si rotamos en positivo o negativo sobre el eje
+     * @param grados Flotante que indica cuantos grados rotaremos
      */
     void Modelo::rotarSobreEjeZ(bool sentido, glm::float32 grados) {
         /*Si queremos rotar un modelo tomando como centro de rotación un punto p arbitrario en el espacio,
@@ -133,7 +139,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Añade una transformación de traslación sobre el eje X del sistema de coordenadas global a la matriz de transformación y modelado del modelo
+     * @param sentido Booleano que indica si nos movemos en positivo o negativo sobre el eje
+     * @param distancia Flotante que indica cuanto avanzaremos en el eje
      */
     void Modelo::trasladarEnEjeX(bool sentido, glm::float32 distancia) {
         if (sentido) {
@@ -152,7 +160,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Añade una transformación de traslación sobre el eje X del sistema de coordenadas global a la matriz de transformación y modelado del modelo
+     * @param sentido Booleano que indica si nos movemos en positivo o negativo sobre el eje
+     * @param distancia Flotante que indica cuanto avanzaremos en el eje
      */
     void Modelo::trasladarEnEjeY(bool sentido, glm::float32 distancia) {
         if (sentido) {
@@ -171,8 +181,10 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
-     */
+    * Añade una transformación de traslación sobre el eje X del sistema de coordenadas global a la matriz de transformación y modelado del modelo
+    * @param sentido Booleano que indica si nos movemos en positivo o negativo sobre el eje
+    * @param distancia Flotante que indica cuanto avanzaremos en el eje
+    */
     void Modelo::trasladarEnEjeZ(bool sentido, glm::float32 distancia) {
         if (sentido) {
             glm::mat4 matrizTraslacion = glm::translate(glm::vec3(0,0, distancia));
@@ -190,7 +202,7 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * A partir del atributo nombreShaders crea el objeto ProgramShader que usaremos para renderizar el modelo
      */
     void Modelo::creaShaderProgram() {
         // Obtenemos los nombres de los shaders
@@ -213,9 +225,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
-     * @param nodo
-     * @param escena
+     * Procesa un nodo durante la carga del modelo con Assimp
+     * @param nodo Puntero al nodo a procesar
+     * @param escena Puntero a la escena donde nos encontramos
      */
     void Modelo::procesarNodo(aiNode *nodo, const aiScene *escena) {
         for(unsigned int i = 0; i < nodo->mNumMeshes; i++) { // if (nodo->mNumMeshes > 0) {
@@ -240,7 +252,7 @@ namespace PAG {
 
         }
 
-        // Hacemos lo mismo para cada hijo del nodo TODO Revisar si hay que hacerlo
+        // Hacemos lo mismo para cada hijo del nodo
         for(unsigned int i = 0; i < nodo->mNumChildren; i++) {
             procesarNodo(nodo->mChildren[i], escena);
         }
@@ -248,7 +260,7 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Carga el modelo indicado en el atributo rutaOBJ usando Assimp
      */
     void Modelo::cargarModelo() {
         Assimp::Importer importador;
@@ -263,7 +275,6 @@ namespace PAG {
             mensajeError.append(importador.GetErrorString());
             throw std::runtime_error(mensajeError);
         }
-        // directory = path.substr(0, path.find_last_of('/')); TODO Borrar si no es necesario
 
         procesarNodo(escena->mRootNode, escena);
 
@@ -288,21 +299,6 @@ namespace PAG {
         // Activamos el atributo coordenadas almacenado en el VBO
         glEnableVertexAttribArray ( 0 );
 
-
-        /*
-         * Descomentar si los modelos incluyen color
-         // Creamos el VBO de colores y lo enlazamos A partir de aquí, todas las órdenes se refieren él
-         glGenBuffers ( 1, &idVBOcolores );
-         glBindBuffer ( GL_ARRAY_BUFFER, idVBOcolores );
-         // Entregamos la información para añadir al VBO el atributo color
-         glBufferData ( GL_ARRAY_BUFFER, 9*sizeof(GLfloat), colores, GL_STATIC_DRAW );
-        // Indicamos a OpenGL cómo están organizados los datos del atributo color de vértice en el VBO activo
-        // Usamos el índice 1 para el color
-        glVertexAttribPointer ( 1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), nullptr );
-        // Activamos el atributo color almacenado en el VBO
-        glEnableVertexAttribArray ( 1 );
-        */
-
         // ------ IBO ------
         // Creamos el IBO y lo enlazamos. A partir de aquí, todas las órdenes se refieren al IBO
         glGenBuffers ( 1, &idIBO );
@@ -313,7 +309,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Vuelve a renderizar el modelo, pasando los datos oportunos a los shaders
+     * @param matrizCompuesta Matriz de visión y proyección a aplicar. Se combina con la de modelado del propio modelo
+     * antes de pasarse como uniform a los shaders.
      */
     void Modelo::refrescarModelo(glm::mat4  matrizCompuesta) {
         // Combinamos la matriz compuesta global (cámara) con la específica de este modelo

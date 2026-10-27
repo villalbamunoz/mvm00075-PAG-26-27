@@ -15,7 +15,7 @@
 namespace PAG {
 
     class Modelo {
-    public: // TODO Hacer private
+    private:
         std::string rutaOBJ;
         ProgramShader* programShader = nullptr;
         std::string nombreShaders = "pag05"; // Aquí incluimos los shaders predeterminados
