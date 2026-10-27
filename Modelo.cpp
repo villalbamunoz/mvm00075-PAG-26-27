@@ -17,6 +17,7 @@ namespace PAG {
         if ( idVAO != 0 )
         { glDeleteVertexArrays ( 1, &idVAO );
         }
+        delete programShader;
     }
 
     /**
