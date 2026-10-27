@@ -143,13 +143,11 @@ namespace PAG {
 
 
     /**
-    * TODO Documentar
+    * TODO borrar
     */
     void Renderer::creaShadersPrograms() {
         // Recorremos los modelos y que cada uno cree su shader program
-        for (int i = 0; i < modelosEnEscena.size(); ++i) {
-            modelosEnEscena[i].creaShaderProgram();
-        }
+
     }
 
 
@@ -158,25 +156,15 @@ namespace PAG {
     * @note No se incluye ninguna comprobación de errores
     */
     void Renderer::cargarModelosPredeterminados() {
-        for (int i = 0; i < modelosEnEscena.size(); ++i) {
-            modelosEnEscena[i].cargarModelo();
-        }
+
     }
 
     /**
      * TODO Documentar
      */
     void Renderer::anadirModelosPredeterminados() {
-        // Incluimos varios modelos y los esparcimos por la escena
-        Modelo modeloParaInsertar1("../modelos/Panther.obj");
-        modelosEnEscena.push_back(modeloParaInsertar1);
-
-        Modelo modeloParaInsertar2("../modelos/Ajax.obj");
-        modelosEnEscena.push_back(modeloParaInsertar2);
-
-        modelosEnEscena[0].trasladarEnEjeZ(true, 1);
-        modelosEnEscena[0].rotarSobreEjeY(true, 80);
-        modelosEnEscena[1].trasladarEnEjeX(true, 1);
+        anadirModelo("../modelos/Panther.obj");
+        anadirModelo("../modelos/Ajax.obj");
 
     }
 

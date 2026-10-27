@@ -366,15 +366,11 @@ int main() {
 
 
 
-    // Antes del ciclo de eventos cargamos los modelos predeterminados, capturando las posibles excepciones
+    // Antes del ciclo de eventos cargamos los modelos predeterminados e inicializamos OpenGL
     try {
         PAG::Renderer::getInstancia().anadirModelosPredeterminados();
-        PAG::Renderer::getInstancia().creaShadersPrograms();
-        PAG::Renderer::getInstancia().cargarModelosPredeterminados();
-
         PAG::Renderer::getInstancia().inicializaOpenGL();
     } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
         PAG::GUI::getInstancia().anadir_mensaje(e.what());
     }
 
