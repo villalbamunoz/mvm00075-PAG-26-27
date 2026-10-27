@@ -90,3 +90,32 @@ En `Renderer::refrescar_escena()` calculamos las matrices de visión y proyecci�
 
 #### Resolución del problema al calcular el vector u
 Para el cálculo del vector u cuando n e Y son colineales y su producto vectorial resulta (0,0,0), se ha optado por la solución propuesta en el temario de teoría, sustituir Y por Z al calcular el producto vectorial en ese caso. Para ello he usado `glm::epsilonEqual`, introduciendo manualmente el umbral 0.005 porque con la constante `epsilon` de GLM nunca se llegaban a igualar los dos vectores. 
+
+
+## Sesión 6
+### Ventanas actuales en la GUI
+La interfaz cuenta con las siguientes ventanas:
+- **Mensajes**: Muestra texto sobre eventos de la aplicación.
+- **Color**: Permite cambiar el color del fondo.
+- **Movimientos de cámara**: Permite seleccionar un movimiento de cámara. Este pasa a controlarse con las teclas que se indican en la propia ventana y haciendo clic con el ratón sobre cualquier punto de la aplicación.
+- **Transformación y borrado**: Permite seleccionar uno de los modelos cargados actualmente. Podremos borrar este con un botón o aplicarle la transformación seleccionada con los botones "+" (rotar y trasladar en positivo, agrandar al escalar) y "-" (rotar y trasladar en negativo, achicar al escalar).
+- **Carga de modelos**: Permite abrir el explorador de archivos para escoger un modelo en formato OBJ para cargar a la escena. Este se carga usando los shaders cuyo nombre especificamos en la caja de texto de esta ventana. Debemos especificar esto antes de cargar el modelo.
+
+### Múltiples modelos simultáneos
+Para empezar, se ha definido una nueva clase Modelo. Todo el proceso que antes gestionaba `Renderer` sobre el triángulo sencillo con el que acabamos la última sesión ahora lo gestiona la clase `Modelo`. Por ello se le han transferido los mismos métodos (`creaShaderProgram`, `cargarModelo` `refrescarModelo`) que trabajan sobre los mismos datos (`programShader`, `nombreShaders`, `vertices`, `indices`, IDs de objetos de OpenGL). Ahora `Renderer` tiene un vector objetos `Modelo` que gestiona y los métodos que se han transferido ahora recorren dicha estructura de datos ejecutando sus equivalentes en cada elemento. He considerado lo más acertado establecer una relación de composición entre ambas clases, pues `Renderer` gestiona la creación y destrucción de todos los objetos `Modelo`, ninguno de ellos existe de forma independiente. 
+
+Además de esta transferencia de responsabilidades, los modelos deben poder recibir transformaciones de modelado. Por ello, la clase cuenta con el atributo `matrizTransformacionModelado`, que se combinará con la de proyección y visión recibida del `Renderer` en cada ciclo de eventos antes de pasarla a los shaders. De esta forma la clase cuenta con métodos para aplicar transformaciones que se aplican sobre este atributo y sobre otro atributo auxiliar `puntoPosModelo`, que se tiene como dato para calcular las rotaciones sobre sí mismo. De esta forma cada modelo puede recibir sus propias transformaciones de modelado, pero todos comparten las de visión y proyección para existir de forma coherente en la escena.
+
+La clase `Modelo` cuenta además con un método `liberarRecursos()` ajeno al destructor. Esto es así para evitar asignaciones repetidas o erróneas de índices de objetos de OpenGL al crear modelos antes de introducirlos en el vector de `Renderer`. Esta última clase se encarga en su destructor de llamar manualmente a este método para cada modelo cargado, de forma que los recursos de OpenGL quedan liberados antes de la destrucción de la clase que los gestiona. 
+
+### Carga de modelos OBJ
+Se ha usado Assimp tal y como se indica en los tutoriales aportados, pero simplificando el proceso para cargar solo modelos con una única malla. Los vértices e índices se guardan en vectores STL atributo en cada modelo. De esta forma podemos pasarlos a OpenGL indicando la dirección de memoria donde empiezan los datos contiguos con `&indices.front()` y `&vertices.front()`.   
+
+### Otros cambios
+Se han movido todos los enumerados a un fichero separado `enumerados.h`, para que sean accesibles desde cualquier clase sin conflictos.
+
+Cada vez que se añade un modelo, este sufre una traslación aleatoria tanto en cantidad como en sentido en cada eje, de forma que los modelos quedan esparcidos por la escena, aproximadamente dentro del campo visual. Esto también se aplica a los dos modelos instanciados por defecto, los `dado.obj` y `Panther.obj` dados como ejemplo en Platea. Por ello, cada vez que se ejecuta la aplicación aparecen en lugares diferentes.
+
+Los shaders de ejemplo de la anterior sesión `pag03` y `rosa` se mantienen igual. Procesan los datos de entrada, pero no reciben el uniform de matriz de transformación, de modo que muestran el modelo siempre de frente, sin importar las transformaciones que mandemos ni los movimientos de cámara que hagamos. La diferencia entre ellos es que `pag03` recibe colores y `rosa` renderiza el modelo de dicho color en todos los casos.
+
+
