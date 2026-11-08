@@ -11,6 +11,8 @@
 #include <glm/ext/matrix_transform.hpp> // Para poder usar glm::lookAt
 #include <glm/ext/matrix_clip_space.hpp> // Para poder usar glm::perspective
 
+#include "Camara.h"
+
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
     Renderer* Renderer::instancia = nullptr;
@@ -75,6 +77,9 @@ namespace PAG {
      */
     void Renderer::callback_resize(int width, int height) {
         glViewport ( 0, 0, width, height );
+
+        // Actualizamos el aspect ratio de la cámara
+        PAG::Camara::getInstancia().set_aspect_ratio((static_cast<float>(width)/static_cast<float>(height)));
     }
 
 

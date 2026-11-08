@@ -1,6 +1,3 @@
-// TODO Explicar la sesión 6 en el README.md
-// TODO Añadir UML
-// TODO Arreglar que las ventanas no sean redimensionables
 #include <iostream>
 #include "Renderer.h"
 #include "GUI.h"
@@ -35,8 +32,7 @@ void error_callback ( int errno, const char* desc )
 
 // - Esta función callback será llamada cada vez que el área de dibujo
 // OpenGL deba ser redibujada.
-void window_refresh_callback ( GLFWwindow *window )
-{
+void window_refresh_callback ( GLFWwindow *window ) {
     PAG::Renderer::getInstancia().refrescar_escena(
         PAG::Camara::getInstancia().get_punto_pos_camara(),
         PAG::Camara::getInstancia().get_punto_la(),
@@ -46,7 +42,6 @@ void window_refresh_callback ( GLFWwindow *window )
         PAG::Camara::getInstancia().get_dist_plano_near(),
         PAG::Camara::getInstancia().get_dist_plano_far()
         );
-
     // - GLFW usa un doble buffer para que no haya parpadeo. Esta orden
     // intercambia el buffer back (que se ha estado dibujando) por el
     // que se mostraba hasta ahora front. Debe ser la última orden de
@@ -58,6 +53,16 @@ void window_refresh_callback ( GLFWwindow *window )
 // del área de dibujo OpenGL.
 void framebuffer_size_callback ( GLFWwindow *window, int width, int height ) {
     PAG::Renderer::getInstancia().callback_resize(width, height);
+
+    PAG::Renderer::getInstancia().refrescar_escena(
+        PAG::Camara::getInstancia().get_punto_pos_camara(),
+        PAG::Camara::getInstancia().get_punto_la(),
+        PAG::Camara::getInstancia().get_vector_v(),
+        PAG::Camara::getInstancia().get_fov_y_grados(),
+        PAG::Camara::getInstancia().get_aspect_ratio(),
+        PAG::Camara::getInstancia().get_dist_plano_near(),
+        PAG::Camara::getInstancia().get_dist_plano_far()
+        );
 }
 
 // - Esta función callback será llamada cada vez que se pulse una tecla

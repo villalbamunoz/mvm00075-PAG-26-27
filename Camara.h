@@ -23,7 +23,7 @@ namespace PAG {
         glm::vec3 puntoPosCamara = {2.0f,2.0f,2.0f}; // Posicion de la camara
         glm::vec3 puntoLA = {.0f,.0f,.0f}; // Punto donde mira la cámara (LookAt)
         glm::float32 fovYGrados = 45; // Ángulo de visión en vertical
-        glm::float32 aspectRatio = 1; // Relación de aspecto
+        glm::float32 aspectRatio = 1.7; // Relación de aspecto
         glm::float32 distPlanoNear = 0.1f;// Distancia plano near
         glm::float32 distPlanoFar = 5.0f; // Distancia plano far
 
@@ -72,6 +72,8 @@ namespace PAG {
         glm::float32 get_dist_plano_far() const {
             return distPlanoFar;
         }
+
+        void set_aspect_ratio(glm::float32 nuevo_ratio) {aspectRatio = nuevo_ratio;}
 
         // Getters de parámetros calculables
         glm::vec3 get_vector_n();
