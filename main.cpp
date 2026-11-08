@@ -367,91 +367,108 @@ int main() {
     while ( !glfwWindowShouldClose ( window ) )
     {
         try {
+            // - Obtiene y organiza los eventos pendientes, tales como pulsaciones de
+            // teclas o de ratón, etc. Siempre al final de cada iteración del ciclo
+            // de eventos y después de glfwSwapBuffers(window);
+            glfwPollEvents ();
 
-        // - Obtiene y organiza los eventos pendientes, tales como pulsaciones de
-        // teclas o de ratón, etc. Siempre al final de cada iteración del ciclo
-        // de eventos y después de glfwSwapBuffers(window);
-        glfwPollEvents ();
+            PAG::Renderer::getInstancia().refrescar_escena(
+                PAG::Camara::getInstancia().get_punto_pos_camara(),
+                PAG::Camara::getInstancia().get_punto_la(),
+                PAG::Camara::getInstancia().get_vector_v(),
+                PAG::Camara::getInstancia().get_fov_y_grados(),
+                PAG::Camara::getInstancia().get_aspect_ratio(),
+                PAG::Camara::getInstancia().get_dist_plano_near(),
+                PAG::Camara::getInstancia().get_dist_plano_far()
+                );
 
-        PAG::Renderer::getInstancia().refrescar_escena(
-            PAG::Camara::getInstancia().get_punto_pos_camara(),
-            PAG::Camara::getInstancia().get_punto_la(),
-            PAG::Camara::getInstancia().get_vector_v(),
-            PAG::Camara::getInstancia().get_fov_y_grados(),
-            PAG::Camara::getInstancia().get_aspect_ratio(),
-            PAG::Camara::getInstancia().get_dist_plano_near(),
-            PAG::Camara::getInstancia().get_dist_plano_far()
+
+
+            PAG::GUI::getInstancia().crear_frame();
+
+
+            // -------------------------------------------------------------------------------------------------------------
+
+            // --- VENTANA DE MENSAJES ---
+            PAG::GUI::getInstancia().dibujar_ventana_mensajes();
+
+            // -------------------------------------------------------------------------------------------------------------
+
+            // --- VENTANA DE SELECCIÓN DE COLOR DE FONDO ---
+            float* color_borrado_frame_buffer = PAG::Renderer::getInstancia().get_color_borrado_frame_buffer();
+            PAG::GUI::getInstancia().dibujar_ventana_seleccion_color(color_borrado_frame_buffer);
+            PAG::Renderer::getInstancia().set_color_borrado_frame_buffer(
+                           color_borrado_frame_buffer[0],
+                           color_borrado_frame_buffer[1],
+                           color_borrado_frame_buffer[2],
+                           1);
+
+
+            // -------------------------------------------------------------------------------------------------------------
+
+            // --- VENTANA DE SELECCIÓN DE MOVIMIENTO DE LA CÁMARA---
+            PAG::GUI::getInstancia().dibujar_ventana_movimientos_camara(&movimiento_camara);
+
+
+            // -------------------------------------------------------------------------------------------------------------
+
+            // --- VENTANA DE SELECCIÓN DE TRANSFORMACIÓN DE MODELADO
+            bool hayTransformacion = false;
+            bool hayBorrado = false;
+            PAG::GUI::getInstancia().dibujar_ventana_transformacion_y_borrado(
+                PAG::Renderer::getInstancia().getRutasModelos(),
+                &hayTransformacion,
+                &hayBorrado,
+                &transformacion_modelado,
+                &sentido_transformacion_modelado,
+                &ruta_obj_seleccionado
             );
+            if (hayTransformacion) {
+                PAG::Renderer::getInstancia().aplicarTransformacion(ruta_obj_seleccionado,
+                    transformacion_modelado, sentido_transformacion_modelado);
+                hayTransformacion = false; // Volvemos a colocar a false, para no aplicar la misma transformación en bucle
+            }
+            if (hayBorrado) {
+                PAG::Renderer::getInstancia().borrarModelo(ruta_obj_seleccionado);
+
+                // Recuperamos los valores iniciales
+                hayBorrado = false;
+                ruta_obj_seleccionado = "";
+            }
+
+            // -------------------------------------------------------------------------------------------------------------
 
 
+            // --- VENTANA DE CARGA DE NUEVOS MODELOS ---
+            std::string rutaNuevoModelo;
+            PAG::GUI::getInstancia().dibujar_ventana_carga_modelos(&rutaNuevoModelo, &shaders_seleccionados);
+            if (!rutaNuevoModelo.empty()) {
+                // Cargamos el modelo pedido
+                PAG::Renderer::getInstancia().anadirModelo(rutaNuevoModelo, shaders_seleccionados);
 
-        PAG::GUI::getInstancia().crear_frame();
+                // Devolvemos las variables a sus valores iniciales tras la carga
+                rutaNuevoModelo = "";
+            }
 
+            // -------------------------------------------------------------------------------------------------------------
+            // -- VENTANA DE SELECCIÓN DE PARÁMETROS DEL MATERIAL --
+            bool cambiarModoVisualizacion = false;
+            PAG::Modelo* modeloSeleccionadoMaterial =
+                PAG::Renderer::getInstancia().getReferenciaModelo(ruta_obj_seleccionado);
+            PAG::GUI::getInstancia().dibujar_ventana_material(
+                PAG::Renderer::getInstancia().getRutasModelos(),
+                &ruta_obj_seleccionado,
+                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroColorAmbiente(),
+                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroColorDifuso(),
+                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroColorEspecular(),
+                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroExpEspecular(),
+                &cambiarModoVisualizacion
+                );
 
-        // -------------------------------------------------------------------------------------------------------------
-
-        // --- VENTANA DE MENSAJES ---
-        PAG::GUI::getInstancia().dibujar_ventana_mensajes();
-
-        // -------------------------------------------------------------------------------------------------------------
-
-        // --- VENTANA DE SELECCIÓN DE COLOR DE FONDO ---
-        float* color_borrado_frame_buffer = PAG::Renderer::getInstancia().get_color_borrado_frame_buffer();
-        PAG::GUI::getInstancia().dibujar_ventana_seleccion_color(color_borrado_frame_buffer);
-        PAG::Renderer::getInstancia().set_color_borrado_frame_buffer(
-                       color_borrado_frame_buffer[0],
-                       color_borrado_frame_buffer[1],
-                       color_borrado_frame_buffer[2],
-                       1);
-
-
-        // -------------------------------------------------------------------------------------------------------------
-
-        // --- VENTANA DE SELECCIÓN DE MOVIMIENTO DE LA CÁMARA---
-        PAG::GUI::getInstancia().dibujar_ventana_movimientos_camara(&movimiento_camara);
-
-
-        // -------------------------------------------------------------------------------------------------------------
-
-        // --- VENTANA DE SELECCIÓN DE TRANSFORMACIÓN DE MODELADO
-        bool hayTransformacion = false;
-        bool hayBorrado = false;
-        PAG::GUI::getInstancia().dibujar_ventana_transformacion_y_borrado(
-            PAG::Renderer::getInstancia().getRutasModelos(),
-            &hayTransformacion,
-            &hayBorrado,
-            &transformacion_modelado,
-            &sentido_transformacion_modelado,
-            &ruta_obj_seleccionado
-        );
-        if (hayTransformacion) {
-            PAG::Renderer::getInstancia().aplicarTransformacion(ruta_obj_seleccionado,
-                transformacion_modelado, sentido_transformacion_modelado);
-            hayTransformacion = false; // Volvemos a colocar a false, para no aplicar la misma transformación en bucle
-        }
-        if (hayBorrado) {
-            PAG::Renderer::getInstancia().borrarModelo(ruta_obj_seleccionado);
-
-            // Recuperamos los valores iniciales
-            hayBorrado = false;
-            ruta_obj_seleccionado = "";
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
-
-
-        // --- VENTANA DE CARGA DE NUEVOS MODELOS ---
-        std::string rutaNuevoModelo;
-        PAG::GUI::getInstancia().dibujar_ventana_carga_modelos(&rutaNuevoModelo, &shaders_seleccionados);
-        if (!rutaNuevoModelo.empty()) {
-            // Cargamos el modelo pedido
-            PAG::Renderer::getInstancia().anadirModelo(rutaNuevoModelo, shaders_seleccionados);
-
-            // Devolvemos las variables a sus valores iniciales tras la carga
-            rutaNuevoModelo = "";
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
+            if (cambiarModoVisualizacion) {
+                PAG::Renderer::getInstancia().cambiarModoVisualizacion();
+                cambiarModoVisualizacion = false;
+            }
 
         } catch (std::exception &e) {
             PAG::GUI::getInstancia().anadir_mensaje(e.what());

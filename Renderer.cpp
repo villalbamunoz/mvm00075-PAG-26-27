@@ -54,9 +54,6 @@ namespace PAG {
         // Limpiamos los buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Dibujamos los modelos como malla de alambre
-        glPolygonMode ( GL_FRONT_AND_BACK, GL_LINE );
-
         // Calculamos las matrices de visión y proyección
         glm::mat4 matrizVision = glm::lookAt(puntoPosCamara, puntoLA, {0,1,0});
         glm::mat4 matrizProyeccion = glm::perspective(glm::radians(fovYGrados), aspectRatio, distZNear, distZFar);
@@ -255,5 +252,41 @@ namespace PAG {
         }
         // Borramos el elemento en la posición indiceBuscado
         modelosEnEscena.erase(it);
+    }
+
+    /**
+     * TODO Documentar
+     * @param ruta
+     */
+    Modelo* Renderer::getReferenciaModelo(std::string ruta) {
+        // Buscamos el elemento
+        std::vector<Modelo>::iterator it;
+        for (it = modelosEnEscena.begin(); it != modelosEnEscena.end(); ++it) {
+            if (it->getRuta() == ruta) {
+                return &(*it);
+                break;
+            }
+        }
+        return nullptr;
+
+    }
+
+    /**
+     * TODO Documentar
+     */
+    void Renderer::cambiarModoVisualizacion() {
+        // Cambiamos el valor del atributo booleano para saber que cambio hacer la próxima vez
+        modoVisualizacion = !modoVisualizacion;
+
+        // Aplicamos el cambio
+        if (modoVisualizacion) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            std::cout << "fill" << std::endl;
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            std::cout << "line" << std::endl;
+        }
+
+
     }
 }

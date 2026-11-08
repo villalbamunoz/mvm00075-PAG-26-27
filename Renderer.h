@@ -33,14 +33,20 @@ namespace PAG {
         // Shaders que se usarán al añadir los modelos predeterminados
         std::string shaderPredeterminados = "pag05";
 
+        // Modo de visualización de la aplicación. GL_FILL = true, GL_LINE = false
+        bool modoVisualizacion = true;
+
     public:
         static Renderer& getInstancia();
         virtual ~Renderer();
 
+        // Generales
         void refrescar_escena(glm::vec3 puntoPosCamara, glm::vec3 puntoLA, glm::vec3 upVector, glm::float32 fovYGrados,
             glm::float32 aspectRatio, glm::float32 distZNear, glm::float32 distZFar);
         void callback_resize(int width, int height);
         void habilitar_profundidad();
+        void inicializaOpenGL();
+        void cambiarModoVisualizacion();
 
         // Getters y setters
         void set_color_borrado_frame_buffer(float r, float g, float b, float a);
@@ -48,16 +54,12 @@ namespace PAG {
         std::string get_propiedades_del_contexto();
         std::vector<std::string> getRutasModelos();
 
-        // Generales
-        void creaShadersPrograms();
-        void cargarModelosPredeterminados();
-        void inicializaOpenGL();
-
         // Gestión de modelos en escena
         void anadirModelo(std::string rutaModelo, std::string nombreShaders);
         void anadirModelosPredeterminados();
         void aplicarTransformacion(std::string rutaModelo, TransformacionModelado transformacion, bool sentido);
         void borrarModelo(std::string ruta);
+        Modelo* getReferenciaModelo(std::string ruta);
 
     };
 } // PAG

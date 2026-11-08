@@ -9,7 +9,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> // Esta es necesaria aunque Clion indique lo contrario
 #include "enumerados.h"
-
+#include "Material.h"
 
 
 namespace PAG {
@@ -21,7 +21,7 @@ namespace PAG {
         std::string nombreShaders = "pag05"; // Aquí incluimos los shaders predeterminados
         glm::mat4 matrizTransformacionModelado = glm::mat4(1); // Este constructor crea la identity matrix
         glm::vec3 puntoPosModelo = {0.0f,0.0f,0.0f}; // Posicion del modelo
-
+        Material material;
 
         // EEDD para guardar los datos del modelo en sí
         std::vector<glm::vec3> vertices;
@@ -61,6 +61,7 @@ namespace PAG {
 
         // Getters y setters
         std::string getRuta() {return rutaOBJ;};
+        Material* getReferenciaMaterial() {return &material;};
 
     };
 } // PAG

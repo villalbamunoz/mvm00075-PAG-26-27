@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ostream>
 #include <imgui_stdlib.h>
+#include <glm/glm.hpp>
 
 namespace PAG {
     // Inicialización perezosa del singleton (la colocamos al principio por convención).
@@ -111,15 +112,13 @@ namespace PAG {
 
 
         if ( ImGui::Begin("Color")){
-            ImGui::SetWindowSize(ImVec2 (300, 50));
+            ImGui::SetWindowSize(ImVec2 (300, 80));
 
             // La ventana está desplegada
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
 
             // Pintamos los controles
-            {
-                ImGui::ColorEdit3("Color ventana", color);
-            }
+            ImGui::ColorEdit3("Color ventana", color);
 
         }
         // Si la ventana no está desplegada, Begin devuelve false
@@ -238,7 +237,7 @@ namespace PAG {
                                                        bool* hayBorrado, TransformacionModelado* transformacionSeleccionada, bool* sentido,
                                                        std::string* rutaModeloSeleccionado) {
         // Indicamos la posición de la ventana que vamos a dibujar
-        ImGui::SetNextWindowPos ( ImVec2 (700, 110), ImGuiCond_Once );
+        ImGui::SetNextWindowPos ( ImVec2 (700, 120), ImGuiCond_Once );
 
 
         if ( ImGui::Begin("Transformación y borrado")){
@@ -277,8 +276,6 @@ namespace PAG {
                             indiceRutaModeloSeleccionado = i;
                         }
 
-                        // Set the initial focus when opening the combo
-                        // (scrolling + keyboard navigation focus)
                         if (isSelected) {
                             ImGui::SetItemDefaultFocus();
                         }
@@ -461,12 +458,130 @@ namespace PAG {
         if(dialogoSeleccionArchivos.HasSelected())
         {
             // Añadimos el modelo a la escena
-
             *rutaModelo = dialogoSeleccionArchivos.GetSelected().string();
 
             // Limpiamos la selección
             dialogoSeleccionArchivos.ClearSelected();
         }
+    }
+
+    /**
+     * TODO Documentar
+     */
+    void GUI::dibujar_ventana_material(std::vector<std::string> rutasModelos, std::string *rutaModeloSeleccionado,
+            glm::vec3* colorAmbiente, glm::vec3* colorDifuso, glm::vec3* colorEspecular, glm::float32* exponenteEspecular,
+            bool* cambiarModoVisualizacion) {
+
+        // Indicamos la posición de la ventana que vamos a dibujar
+        ImGui::SetNextWindowPos ( ImVec2 (700, 335), ImGuiCond_Once );
+
+        if ( ImGui::Begin("Material")){
+            // La ventana está desplegada
+            ImGui::SetWindowSize(ImVec2 (300, 200));
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+
+            // --- SELECTOR DE MODELO ---
+            if (rutasModelos.empty()) {
+                // Si no hay modelos para seleccionar, no mostramos opciones
+                ImGui::Text("Cargue modelos para acceder a estas opciones");
+            } else {
+                // Si sí hay modelos, mostramos opciones
+                // Variables necesarias para el selector de modelo
+                bool changedMRutaModelo;
+                int indiceRutaModeloSeleccionado = -1;
+
+                // Si no hay un modelo seleccionado, seleccionamos el primero de la lista
+                if (rutaModeloSeleccionado->empty()) {
+                    *rutaModeloSeleccionado = rutasModelos[0];
+                    indiceRutaModeloSeleccionado = 0;
+                } else {
+                    // Obtenemos el índice del modelo
+                    for (int i = 0; i < rutasModelos.size(); ++i) {
+                        if (rutasModelos[i] == *rutaModeloSeleccionado) {
+                            indiceRutaModeloSeleccionado = i;
+                        }
+                    }
+                }
+
+                // Para tener opciones variables en un combo no nos sirve ImGui::Combo
+                if (ImGui::BeginCombo("##Modelo", rutasModelos[indiceRutaModeloSeleccionado].c_str(), 0)) {
+                    for (int i = 0; i < rutasModelos.size(); ++i) {
+                        const bool isSelected = (indiceRutaModeloSeleccionado == i);
+                        if (ImGui::Selectable(rutasModelos[i].c_str(), isSelected)) {
+                            indiceRutaModeloSeleccionado = i;
+                        }
+
+                        if (isSelected) {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                // Actualizamos el puntero con la selección hecha
+                *rutaModeloSeleccionado = rutasModelos[indiceRutaModeloSeleccionado];
+
+                // --- SELECTORES DE MATERIAL --
+
+                // Pintamos los selectores para los 3 colores del material
+                float fColorAmbiente[3] = { // Hay que convertir a array de flotantes para pasarlo a ImGui::ColorEdit3
+                    (*colorAmbiente)[0],
+                    (*colorAmbiente)[1],
+                    (*colorAmbiente)[2]
+                };
+                ImGui::ColorEdit3("Ambiente", fColorAmbiente);
+                (*colorAmbiente)[0] = fColorAmbiente[0];
+                (*colorAmbiente)[1] = fColorAmbiente[1];
+                (*colorAmbiente)[2] = fColorAmbiente[2];
+
+
+                float fColorDifuso[3] = { // Hay que convertir a array de flotantes para pasarlo a ImGui::ColorEdit3
+                    (*colorDifuso)[0],
+                    (*colorDifuso)[1],
+                    (*colorDifuso)[2]
+                };
+                ImGui::ColorEdit3("Difuso", fColorDifuso);
+                (*colorDifuso)[0] = fColorDifuso[0];
+                (*colorDifuso)[1] = fColorDifuso[1];
+                (*colorDifuso)[2] = fColorDifuso[2];
+
+
+                float fColorEspecular[3] = { // Hay que convertir a array de flotantes para pasarlo a ImGui::ColorEdit3
+                    (*colorEspecular)[0],
+                    (*colorEspecular)[1],
+                    (*colorEspecular)[2]
+                };
+                ImGui::ColorEdit3("Especular", fColorEspecular);
+                (*colorEspecular)[0] = fColorEspecular[0];
+                (*colorEspecular)[1] = fColorEspecular[1];
+                (*colorEspecular)[2] = fColorEspecular[2];
+
+
+                // Pintamos las cajas de texto para introducir el exponente especular
+                ImGui::Text("Exponente especular: ");
+                ImGui::SameLine();
+                ImGui::InputFloat ( "##", exponenteEspecular, ImGuiInputTextFlags_AutoSelectAll );
+
+
+
+                // --- BOTÓN DE MODO DE VISUALIZACIÓN --
+                int clickedPos = 0;
+                if (ImGui::Button("Cambiar modo de visualización"))
+                    clickedPos++;
+                if (clickedPos & 1)
+                {
+                    *cambiarModoVisualizacion = true;
+                    // Con estas líneas podríamos incluir feedback visual por pantalla
+                    // ImGui::SameLine();
+                    // ImGui::Text("Modo de visualización cambiado");
+                }
+
+
+            }
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+
     }
 
     /*

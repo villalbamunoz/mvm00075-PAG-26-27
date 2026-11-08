@@ -8,6 +8,7 @@
 #include <vector>
 #include "enumerados.h"
 #include <imfilebrowser.h>
+#include <glm/fwd.hpp>
 
 namespace PAG {
 
@@ -37,6 +38,9 @@ namespace PAG {
         void dibujar_ventana_transformacion_y_borrado(std::vector<std::string> rutasModelos, bool* hayTransformacion,
             bool* hayBorrado, TransformacionModelado* transformacionSeleccionada, bool* sentido, std::string* rutaModeloSeleccionado);
         void dibujar_ventana_carga_modelos(std::string* rutaModelo, std::string* nombreShaders);
+        void dibujar_ventana_material(std::vector<std::string> rutasModelos, std::string* rutaModeloSeleccionado,
+            glm::vec3* colorAmbiente, glm::vec3* colorDifuso, glm::vec3* colorEspecular, glm::float32* exponenteEspecular,
+            bool* cambiarModoVisualizacion);
 
         void anadir_mensaje(std::string mensaje);
 
