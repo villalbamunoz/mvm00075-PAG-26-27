@@ -255,8 +255,8 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
-     * @param ruta
+     * Devuelve un puntero al modelo cuya ruta especifiquemos
+     * @param ruta String que contiene la ruta al OBJ del modelo que queremos borrar
      */
     Modelo* Renderer::getReferenciaModelo(std::string ruta) {
         // Buscamos el elemento

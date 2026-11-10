@@ -18,7 +18,7 @@ namespace PAG {
     private:
         std::string rutaOBJ;
         ProgramShader* programShader = nullptr;
-        std::string nombreShaders = "pag05"; // Aquí incluimos los shaders predeterminados
+        std::string nombreShaders = "pag07"; // Aquí incluimos los shaders predeterminados
         glm::mat4 matrizTransformacionModelado = glm::mat4(1); // Este constructor crea la identity matrix
         glm::vec3 puntoPosModelo = {0.0f,0.0f,0.0f}; // Posicion del modelo
         Material material;

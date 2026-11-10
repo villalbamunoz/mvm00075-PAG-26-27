@@ -31,7 +31,7 @@ namespace PAG {
         glm::float32 distTraslacion = 0.01f;
 
         // Shaders que se usarán al añadir los modelos predeterminados
-        std::string shaderPredeterminados = "pag05";
+        std::string shaderPredeterminados = "pag07";
 
         // Modo de visualización de la aplicación. GL_FILL = true, GL_LINE = false
         bool modoVisualizacion = true;

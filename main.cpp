@@ -16,7 +16,7 @@ PAG::MovimientoCamara movimiento_camara = PAG::sinMovCamara; // Este será el mo
 PAG::TransformacionModelado transformacion_modelado = PAG::escalar; // Transformación predeterminada
 bool sentido_transformacion_modelado = true; // Sentido de transformación de modelado predeterminado
 std::string ruta_obj_seleccionado = "../modelos/Panther.obj"; // Colocamos uno de los objetos añadidos de forma predeterminada
-std::string shaders_seleccionados = "pag05"; // Shaders que se usarán al cargar modelo
+std::string shaders_seleccionados = "pag07"; // Shaders que se usarán al cargar modelo
 bool boton_izq_raton_pulsado = false;
 double pos_x_raton_ultima_pulsacion_tecla_izq = 0;
 double pos_y_raton_ultima_pulsacion_tecla_izq = 0;
@@ -431,9 +431,16 @@ int main() {
             if (hayBorrado) {
                 PAG::Renderer::getInstancia().borrarModelo(ruta_obj_seleccionado);
 
-                // Recuperamos los valores iniciales
+                // Recuperamos el valor inicial
                 hayBorrado = false;
-                ruta_obj_seleccionado = "";
+
+                // Dejamos como seleccionado el primer modelo de la lista, si lo hay
+                std::vector<std::string> rutas = PAG::Renderer::getInstancia().getRutasModelos();
+                if (rutas.empty()) {
+                    ruta_obj_seleccionado = "";
+                } else {
+                    ruta_obj_seleccionado = rutas[0];
+                }
             }
 
             // -------------------------------------------------------------------------------------------------------------
@@ -446,6 +453,9 @@ int main() {
                 // Cargamos el modelo pedido
                 PAG::Renderer::getInstancia().anadirModelo(rutaNuevoModelo, shaders_seleccionados);
 
+                // Marcamos el modelo recién introducido como el seleccionado
+                ruta_obj_seleccionado = rutaNuevoModelo;
+
                 // Devolvemos las variables a sus valores iniciales tras la carga
                 rutaNuevoModelo = "";
             }
@@ -453,17 +463,34 @@ int main() {
             // -------------------------------------------------------------------------------------------------------------
             // -- VENTANA DE SELECCIÓN DE PARÁMETROS DEL MATERIAL --
             bool cambiarModoVisualizacion = false;
-            PAG::Modelo* modeloSeleccionadoMaterial =
+            PAG::Modelo* pModeloSeleccionado =
                 PAG::Renderer::getInstancia().getReferenciaModelo(ruta_obj_seleccionado);
-            PAG::GUI::getInstancia().dibujar_ventana_material(
+            // TODO Comprobar que modeloSeleccionadoMaterial no sea nullptr. Si lo es, dar placeholder a los valores de material
+            if (pModeloSeleccionado == nullptr) {
+                // Si no hay un modelo, hacemos la llamada con datos placeholder para que la ventana se dibuje correctamente
+                PAG::GUI::getInstancia().dibujar_ventana_material(
                 PAG::Renderer::getInstancia().getRutasModelos(),
                 &ruta_obj_seleccionado,
-                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroColorAmbiente(),
-                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroColorDifuso(),
-                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroColorEspecular(),
-                modeloSeleccionadoMaterial->getReferenciaMaterial()->getPunteroExpEspecular(),
+                nullptr,
+                nullptr,
+                nullptr,
+                nullptr,
                 &cambiarModoVisualizacion
                 );
+            }  else {
+                // Si sí hay un modelo, hacemos la llamada con sus datos
+                PAG::GUI::getInstancia().dibujar_ventana_material(
+                PAG::Renderer::getInstancia().getRutasModelos(),
+                &ruta_obj_seleccionado,
+                pModeloSeleccionado->getReferenciaMaterial()->getPunteroColorAmbiente(),
+                pModeloSeleccionado->getReferenciaMaterial()->getPunteroColorDifuso(),
+                pModeloSeleccionado->getReferenciaMaterial()->getPunteroColorEspecular(),
+                pModeloSeleccionado->getReferenciaMaterial()->getPunteroExpEspecular(),
+                &cambiarModoVisualizacion
+                );
+            }
+
+
 
             if (cambiarModoVisualizacion) {
                 PAG::Renderer::getInstancia().cambiarModoVisualizacion();
