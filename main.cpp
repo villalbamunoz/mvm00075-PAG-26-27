@@ -465,7 +465,6 @@ int main() {
             bool cambiarModoVisualizacion = false;
             PAG::Modelo* pModeloSeleccionado =
                 PAG::Renderer::getInstancia().getReferenciaModelo(ruta_obj_seleccionado);
-            // TODO Comprobar que modeloSeleccionadoMaterial no sea nullptr. Si lo es, dar placeholder a los valores de material
             if (pModeloSeleccionado == nullptr) {
                 // Si no hay un modelo, hacemos la llamada con datos placeholder para que la ventana se dibuje correctamente
                 PAG::GUI::getInstancia().dibujar_ventana_material(

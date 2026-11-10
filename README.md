@@ -1,6 +1,8 @@
 # mvm00075-PAG-26-27
 Proyecto de prácticas de la asignatura Programación de Aplicaciones Gráficas de Manuel Villalba Muñoz para el curso 2026-27
 
+Se pueden consultar los diagramas UML en la carpeta `img` del repositorio.
+
 ## Sesión 1: Ejercicio de reflexión
 Una posible solución al problema es definir `PAG::Renderer` como una clase que siga el patrón de diseño _singleton_. Tiene sentido, pues no se va a declarar más de una instancia de ella, al encargarse de una tarea tan global como gestionar el contexto gráfico de OpenGL de nuestra aplicación. Por ejemplo, si tuviéramos 2 instancias diferentes de `PAG::Renderer` no tendría diferencia el llamar al método `refrescarVentana()` de una u otra, pues ambos harían lo mismo.
 
@@ -117,5 +119,26 @@ Se han movido todos los enumerados a un fichero separado `enumerados.h`, para qu
 Cada vez que se añade un modelo, este sufre una traslación aleatoria tanto en cantidad como en sentido en cada eje, de forma que los modelos quedan esparcidos por la escena, aproximadamente dentro del campo visual. Esto también se aplica a los dos modelos instanciados por defecto, los `dado.obj` y `Panther.obj` dados como ejemplo en Platea. Por ello, cada vez que se ejecuta la aplicación aparecen en lugares diferentes.
 
 Los shaders de ejemplo de la anterior sesión `pag03` y `rosa` se mantienen igual. Procesan los datos de entrada, pero no reciben el uniform de matriz de transformación, de modo que muestran el modelo siempre de frente, sin importar las transformaciones que mandemos ni los movimientos de cámara que hagamos. La diferencia entre ellos es que `pag03` recibe colores y `rosa` renderiza el modelo de dicho color en todos los casos.
+
+## Sesión 7
+### Ventana de gestión de material
+La nueva ventana "Material" de la interfaz permite seleccionar uno de los modelos cargados actualmente de igual manera que la ventana de transformación y borrado. Para cada modelo podemos modificar sus 3 colores usando el mismo componente de ImGUI que se usa en la ventana de selección de color de fondo, de modo que podemos escribir manualmente cada valor RGB o clicar en el cuadrado de color para usar una interfaz más amigable. Para la componente especular, que es un único valor flotante, hay una caja de texto creada para recibir solo este tipo de dato, con 3 decimales de precisión. Así, gran parte de la comprobación de los datos de entrada la hace ImGUI directamente. Por ahora solo usamos el color difuso, de modo que es el único cambio que se aprecia al alterar valores de material.
+
+La ventana cuenta además con un botón para cambiar el modo de visualización de la aplicación. Por ahora solo tenemos 2 valores, sólido y alambre, de modo que solo he colocado un botón. Este cambia de uno a otro cada vez que se clica. 
+
+### Clase Material
+He aislado los atributos de material que tenemos por ahora (colores ambiente, difuso y especular y exponente especular) en la clase `Material`. La clase `Modelo` tiene un atributo de esta, en una relación de asociación. La clase `Material` tiene métodos para modificar todos estos atributos y para obtener punteros a ellos. He elegido esto último frente a devolver solo valores para así poder actualizar el tiempo real su valor a través de la interfaz. 
+
+
+### Cambios en shaders
+Los nuevos shaders, `pag07`, se comunican entre sí con bloques de interfaz, aunque por ahora solo se pasa un valor, el color difuso para aplicar. 
+
+El vertex shader sigue recibiendo un parámetro para el color y tratándolo igual (recibir un vec3, añadirle el valor 1 al alpha y darlo como salida), solo que ahora el parámetro se llama `colorDifuso` por ser más específico. El valor que recibe ahora viene del atributo de color difuso del atributo material del modelo. La gestión de matrices uniform y posición del vértice no se ha alterado.
+
+El fragment shader cuenta ahora con la subrutina `fCalcularColor`, que tiene dos implementaciones: `usarColorDifuso` y `usarColorPredeterminado`. Como sus nombres indican, la primera devuelve el color difuso que el shader recibe como entrada y la segunda devuelve un color predeterminado, en este caso negro. En el main se asigna la salida de esta subrutina a `colorFragmento`, el color final de salida del shader que se usará. Cada vez que refrescamos el modelo consultamos el modo de dibujado con `glGetIntegerv`  usando la constante `GL_POLYGON_MODE` para seleccionar la subrutina de color difuso en modo `FILL` y el predeterminado en cualquier otro caso, que en nuestra aplicación por ahora será solo `LINE`.
+
+Los shaders de las sesiones anteriores siguen inalterados, cada uno perdiendo funcionalidad a medida que retrocedemos.
+
+
 
 

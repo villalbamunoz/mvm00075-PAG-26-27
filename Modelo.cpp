@@ -334,8 +334,6 @@ namespace PAG {
 
 
         // --- UNIFORM DE COLOR DIFUSO ---
-
-
         // De forma predeterminada usamos negro
         glm::vec3 colorDifuso = {0,0,0};
         colorDifuso = *material.getPunteroColorDifuso();
@@ -349,7 +347,6 @@ namespace PAG {
         }
 
         // --- SELECCIÓN DE SUBRUTINA DE COLOR ALAMBRE/SÓLIDO ---
-
         // Obtenemos el modo de dibujado.
         GLint polygonMode;
         glGetIntegerv(GL_POLYGON_MODE, &polygonMode);

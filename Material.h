@@ -5,7 +5,6 @@
 namespace PAG {
     class Material {
     private:
-        // TODO Dar valores predeterminados adecuados
         glm::vec3 colorAmbiente = {1,0,0};
         glm::vec3 colorDifuso = {0,1,0};
         glm::vec3 colorEspecular = {0,0,1};

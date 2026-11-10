@@ -466,11 +466,19 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Dibuja la ventana de gestión de material
+     * @param rutasModelos Vector de strings con las rutas a los modelos cargados actualmente
+     * @param rutaModeloSeleccionado Puntero a string en el que introduciremos la ruta al modelo seleccionado por el usuario
+     * @param colorAmbiente Puntero al color ambiente del material del modelo seleccionado actualmente
+     * @param colorDifuso Puntero al color difuso del material del modelo seleccionado actualmente
+     * @param colorEspecular Puntero al color especular del material del modelo seleccionado actualmente
+     * @param exponenteEspecular Puntero al exponente especular del material del modelo seleccionado actualmente
+     * @param cambiarModoVisualizacion Puntero a booleano que colocaremos a verdadero si el usuario ha elegido cambiar el
+     *      modo de visualización. Debe estar a falso en la llamada exterior.
      */
     void GUI::dibujar_ventana_material(std::vector<std::string> rutasModelos, std::string *rutaModeloSeleccionado,
-            glm::vec3* colorAmbiente, glm::vec3* colorDifuso, glm::vec3* colorEspecular, glm::float32* exponenteEspecular,
-            bool* cambiarModoVisualizacion) {
+                                       glm::vec3* colorAmbiente, glm::vec3* colorDifuso, glm::vec3* colorEspecular, glm::float32* exponenteEspecular,
+                                       bool* cambiarModoVisualizacion) {
 
         // Indicamos la posición de la ventana que vamos a dibujar
         ImGui::SetNextWindowPos ( ImVec2 (700, 335), ImGuiCond_Once );

@@ -272,7 +272,9 @@ namespace PAG {
     }
 
     /**
-     * TODO Documentar
+     * Cambia el modo de visualización, tanto en OpenGL como en la variable interna propia de la clase Renderer.
+     * Ahora mismo solo tenemos dos valores (sólido y alambre), de modo que esta función no recibe parámetros, solo
+     * cambia de uno a otro cada vez que se la llama.
      */
     void Renderer::cambiarModoVisualizacion() {
         // Cambiamos el valor del atributo booleano para saber que cambio hacer la próxima vez
