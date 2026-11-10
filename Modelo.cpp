@@ -315,21 +315,47 @@ namespace PAG {
      * antes de pasarse como uniform a los shaders.
      */
     void Modelo::refrescarModelo(glm::mat4  matrizCompuesta) {
-        // Combinamos la matriz compuesta global (cámara) con la específica de este modelo
-        glm::mat4 matrizFinal = matrizCompuesta * matrizTransformacionModelado;
 
         // Activamos nuestro shader program
         glUseProgram ( programShader->getIdOpenGL());
 
-        // Pasamos la matriz como uniform al vertex shader
-        std::string nombreUniform = "matrizModeladoVisionProyeccion"; // Mismo nombre que hemos puesto en el shader
-        GLint posicion = glGetUniformLocation ( programShader->getIdOpenGL(), nombreUniform.c_str () );
+        // --- UNIFORM DE MATRIZ DE VISIÓN Y PROYECCIÓN---
+        // Combinamos la matriz compuesta global (cámara) con la específica de este modelo
+        glm::mat4 matrizFinal = matrizCompuesta * matrizTransformacionModelado;
 
-        if ( posicion != -1 )
+        // Pasamos la matriz como uniform al vertex shader
+        std::string nombreUniformMVyP = "matrizModeladoVisionProyeccion"; // Mismo nombre que hemos puesto en el shader
+        GLint posicionUniformMVyP = glGetUniformLocation ( programShader->getIdOpenGL(), nombreUniformMVyP.c_str () );
+
+        if ( posicionUniformMVyP != -1 )
         {  // El uniform existe y se ha podido localizar correctamente
-            glUniformMatrix4fv ( posicion, 1, GL_FALSE, &matrizFinal[0][0] );
+            glUniformMatrix4fv ( posicionUniformMVyP, 1, GL_FALSE, &matrizFinal[0][0] );
         }
 
+
+        // --- UNIFORM DE COLOR DIFUSO ---
+
+        // Obtenemos el modo de dibujado.
+        GLint polygonMode;
+        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+
+        // De forma predeterminada usamos negro
+        glm::vec3 colorDifuso = {0,0,0};
+
+        // Si estamos en modo FILL usamos el color difuso del material
+        if ( polygonMode == GL_FILL )
+            colorDifuso = *material.getPunteroColorDifuso();
+
+        std::string nombreUniformColorDifuso = "colorDifuso"; // Mismo nombre que hemos puesto en el shader
+        GLint posicionUniformColorDifuso = glGetUniformLocation (
+            programShader->getIdOpenGL(), nombreUniformColorDifuso.c_str () );
+
+        if ( posicionUniformColorDifuso != -1 )
+        {  // El uniform existe y se ha podido localizar correctamente
+            glUniform3fv ( posicionUniformColorDifuso, 1, &(colorDifuso)[0] );
+        }
+
+        // --- VAO e IBO ---
         // Activamos nuestro VAO
         glBindVertexArray (idVAO);
 

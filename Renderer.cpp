@@ -281,10 +281,8 @@ namespace PAG {
         // Aplicamos el cambio
         if (modoVisualizacion) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            std::cout << "fill" << std::endl;
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            std::cout << "line" << std::endl;
         }
 
 
