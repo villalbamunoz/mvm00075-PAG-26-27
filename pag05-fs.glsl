@@ -1,11 +1,6 @@
 #version 410
-
-in salidaVS
-{
-    vec4 colorParaAplicar;
-} entrada;
-
-out vec4 colorFragmento;
+in vec4 colorParaAplicar;
+layout ( location = 0 ) out vec4 colorFragmento;
 void main () {
-    colorFragmento = entrada.colorParaAplicar;
+    colorFragmento = colorParaAplicar;
 };
