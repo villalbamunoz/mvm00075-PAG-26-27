@@ -4,14 +4,13 @@ uniform mat4 matrizModeladoVisionProyeccion; /* Para aplicar a los vértices */
 uniform vec3 colorDifuso;
 
 layout (location = 0) in vec3 posicion;
-layout (location = 1) in vec3 color; /* TODO Quitar */
 
 out salidaVS
 {
-    vec4 colorParaAplicar;
+    vec4 colorDifusoParaAplicar;
 } salida;
 
 void main () {
-    salida.colorParaAplicar = vec4 ( colorDifuso, 1.0 );
+    salida.colorDifusoParaAplicar = vec4 ( colorDifuso, 1.0 );
     gl_Position = matrizModeladoVisionProyeccion * vec4 ( posicion, 1 );
 }

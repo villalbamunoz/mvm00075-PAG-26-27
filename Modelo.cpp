@@ -335,17 +335,10 @@ namespace PAG {
 
         // --- UNIFORM DE COLOR DIFUSO ---
 
-        // Obtenemos el modo de dibujado.
-        GLint polygonMode;
-        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
 
         // De forma predeterminada usamos negro
         glm::vec3 colorDifuso = {0,0,0};
-
-        // Si estamos en modo FILL usamos el color difuso del material
-        if ( polygonMode == GL_FILL )
-            colorDifuso = *material.getPunteroColorDifuso();
-
+        colorDifuso = *material.getPunteroColorDifuso();
         std::string nombreUniformColorDifuso = "colorDifuso"; // Mismo nombre que hemos puesto en el shader
         GLint posicionUniformColorDifuso = glGetUniformLocation (
             programShader->getIdOpenGL(), nombreUniformColorDifuso.c_str () );
@@ -354,6 +347,25 @@ namespace PAG {
         {  // El uniform existe y se ha podido localizar correctamente
             glUniform3fv ( posicionUniformColorDifuso, 1, &(colorDifuso)[0] );
         }
+
+        // --- SELECCIÓN DE SUBRUTINA DE COLOR ALAMBRE/SÓLIDO ---
+
+        // Obtenemos el modo de dibujado.
+        GLint polygonMode;
+        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+
+        // Si estamos en modo FILL usamos el color difuso del material
+        if ( polygonMode == GL_FILL ) {
+            GLuint indiceImplementacionSubrutina = glGetSubroutineIndex ( programShader->getIdOpenGL(),
+                GL_FRAGMENT_SHADER, "usarColorDifuso");
+            glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &indiceImplementacionSubrutina );
+        } else {
+            // Si no estamos en modo FILL usamos el color predeterminado
+            GLuint indiceImplementacionSubrutina = glGetSubroutineIndex ( programShader->getIdOpenGL(),
+                GL_FRAGMENT_SHADER, "usarColorPredeterminado");
+            glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &indiceImplementacionSubrutina );
+        }
+
 
         // --- VAO e IBO ---
         // Activamos nuestro VAO
